@@ -1,0 +1,19 @@
+.ProtoActions{
+  display: flex;
+  justify-content: space-between;
+  background: #000;
+  color: #fff;
+  align-items: center;
+  padding: 8px 20px;
+  h1 {
+    font-size: .9em;
+    font-weight: 300;
+    margin: 0;
+  }
+  button {
+    background: none;
+    color: #fff;
+    border: none;
+    &:disabled{opacity: .5}
+  }
+}

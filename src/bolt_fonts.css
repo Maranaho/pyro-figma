@@ -1,0 +1,50 @@
+
+/*Avenir*/
+@font-face {
+    font-family: 'Bolt_ultraTh';
+    src: url('./assets/fonts/AvenirNext-UltraLight.woff') format('woff'),
+        url('./assets/fonts/AvenirNext-UltraLight.woff2') format('woff2');
+        font-weight: 100;
+}
+@font-face {
+    font-family: 'Bolt_th';
+    src: url('./assets/fonts/AvenirNextforINTUIT-Thin.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUIT-Thin.woff2') format('woff2');
+        font-weight: 100;
+}
+@font-face {
+    font-family: 'Bolt_rg';
+    src: url('./assets/fonts/AvenirNextforINTUITW05-Rg.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUITW05-Rg.woff2') format('woff2');
+        font-weight: 100;
+}
+
+
+@font-face {
+    font-family: 'Bolt_md';
+    src: url('./assets/fonts/AvenirNextforINTUITW05-Md.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUITW05-Md.woff2') format('woff2');
+        font-weight: 400;
+}
+
+
+@font-face {
+    font-family: 'Bolt_demi';
+    src: url('./assets/fonts/AvenirNextforINTUITW05-Demi.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUITW05-Demi.woff2') format('woff2');
+        font-weight: 500;
+}
+
+
+@font-face {
+    font-family: 'Bolt_bold';
+    src: url('./assets/fonts/AvenirNextforINTUITW05-Bold.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUITW05-Bold.woff2') format('woff2');
+        font-weight: 900;
+}
+@font-face {
+    font-family: 'Bolt_heavy';
+    src: url('./assets/fonts/AvenirNextforINTUIT-Heavy.woff') format('woff'),
+        url('./assets/fonts/AvenirNextforINTUIT-Heavy.woff2') format('woff2');
+        font-weight: 900;
+}

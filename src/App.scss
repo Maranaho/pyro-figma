@@ -1,0 +1,18 @@
+@import "./colors.scss";
+html>canvas{display: none}
+body {
+  margin: 0;
+  font-family: Roboto;
+  font-size: 14px;
+  color: $dark;
+}
+
+
+p{margin: 0}
+
+.a,a {
+  color: #2196f3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+button{cursor: pointer}
