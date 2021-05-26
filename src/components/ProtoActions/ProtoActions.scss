@@ -1,19 +1,90 @@
 .ProtoActions{
   display: flex;
   justify-content: space-between;
-  background: #000;
+  background: #262728;
   color: #fff;
   align-items: center;
-  padding: 8px 20px;
+  padding-left: 10px;
+  height: 35px;
+  >section{
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .fileInfo{
+    position: relative;
+    cursor: pointer;
+    i{
+      transition: .1s ease;
+      transform: translateY(0px);
+      &:hover{transform: translateY(3px)}
+    }
+  }
   h1 {
     font-size: .9em;
     font-weight: 300;
     margin: 0;
+    &.faded{opacity: .7}
   }
-  button {
-    background: none;
-    color: #fff;
-    border: none;
+  button{
+    &:not(.full) {
+        height: 100%;
+        margin: 0;
+        background: none;
+        color: #fff;
+        border: none;
+        width:35px;
+        &:hover{background: #515253}
+        i{font-size: 1.1em}
+    }
+    &.full{
+      background: #18a0fb;
+      border: none;
+      color: #fff;
+      text-transform: uppercase;
+      font-size: .8em;
+      padding: 5px 15px;
+      border-radius: 5px;
+      margin: 0 10px;
+      &:hover{background: #44b4ff}
+    }
     &:disabled{opacity: .5}
+  }
+  .pagesMenu{
+    position: absolute;
+    right: calc(-50% + 21px);
+    top: 43px;
+    background: #262728;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: .4s ease;
+    &.open{
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    &:before{
+      content:"";
+      display: block;
+      width: 15px;
+      height: 15px;
+      background: #262728;
+      position: absolute;
+      left: calc(50% - 7px);
+      top: -2px;
+      z-index: 0;
+      transform: rotate(45deg);
+    }
+    li{
+      padding: 8px 30px;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+      &:hover{background: #18a0fb}
+    }
   }
 }

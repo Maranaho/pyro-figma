@@ -1,6 +1,6 @@
 const GetFileFromToken = (accessToken,dispatch) =>{
   const figmaFile = "91MpGRzYJyF8ZruHDpUC6r"
-  const url = " https://api.figma.com/v1/files/"+  figmaFile +"/"
+  const url = "https://api.figma.com/v1/files/"+  figmaFile +"/"
 
   const myHeaders = new Headers()
   myHeaders.append("Authorization", "Bearer " + accessToken)

@@ -1,11 +1,23 @@
 let initialPyroState = {
   loading:true,
   figmaData:null,
+  currentFrameIDX:0,
+  currentPageIDX:0,
   token:null
 }
 
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'SET_CURRENT_FRAME_IDX':
+      let SET_CURRENT_FRAME_IDX = {...state}
+      SET_CURRENT_FRAME_IDX.currentFrameIDX = action.payload
+    return SET_CURRENT_FRAME_IDX;
+
+    case 'SET_CURRENT_PAGE_IDX':
+      let SET_CURRENT_PAGE_IDX = {...state}
+      SET_CURRENT_PAGE_IDX.currentPageIDX = action.payload
+    return SET_CURRENT_PAGE_IDX;
 
     case 'LOADING':
       let LOADING = {...state}
