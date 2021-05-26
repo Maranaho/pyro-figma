@@ -3,7 +3,7 @@ import './Loading.css'
 
 const Loading = ()=>(
   <main className="Loading">
-    Loading
+    Loading...
   </main>
 )
 export default Loading

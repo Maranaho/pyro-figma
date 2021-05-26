@@ -1,13 +1,23 @@
 import React,{ useContext,useEffect } from 'react'
+import { Resizable } from 'react-resizable'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
+import Frame from '../Frame'
+import Empty from '../Empty'
 import './Frames.css'
+import './../../resize.css'
 
 const Frames = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX } = useContext(PyroStateContext)
+  const { figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov } = useContext(PyroStateContext)
+
   const currentPage = figmaData.document.children[currentPageIDX]
+  const handleResize = (e,{size}) =>{
+    const { width,height } = size
+    dispatch({type:'SET_WIDTH',payload:width})
+    dispatch({type:'SET_HEIGHT',payload:height})
+  }
 
   const protoStart =()=>{
     currentPage.children.every((frame,idx)=>{
@@ -18,28 +28,20 @@ const Frames = ()=>{
     })
   }
 
-  const setCurrentFrame = ()=>{
-    console.clear()
-    protoStart()
-    figmaData.document.children[currentPageIDX].children.forEach(frame => {
-      //console.log(frame);
-    })
-
-  }
-
-  useEffect(setCurrentFrame,[figmaData])
+  useEffect(protoStart,[figmaData])
   return (
-    <main className="Frames">
-      {currentPage.children.length?
-        <p>{currentPage.children[currentFrameIDX].name}</p>:
-        <section className="empty">
-          <p>
-            <span>There's no frame in this page</span>
-            <span>😲</span>
-          </p>
-        </section>
-      }
-    </main>
+    <Resizable
+      maxConstraints={[window.innerWidth, window.innerHeight - 34]}
+      minConstraints={[375, 400]}
+      onResize={handleResize}
+      width={protoWidth}
+      height={protoHeight}>
+      <main
+        style={{"width":protoWidth,"height":protoHeight}}
+        className={`Frames box ${isMobile?'mobile':'desktop'} ${smoov?'smoov':''}`}>
+        {currentPage.children.length? <Frame/>:<Empty/>}
+      </main>
+    </Resizable>
   )
 }
 export default Frames

@@ -1,0 +1,11 @@
+.Dimensions{
+  height: 100%;
+  display: flex;
+  margin: 0 5px;
+  button{
+    display: flex;
+    align-items: center;
+    img{opacity: .4}
+    &.active img{opacity: 1}
+  }
+}

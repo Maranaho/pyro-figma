@@ -19,7 +19,7 @@ const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
 const App = ()=>{
 
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
-  const { figmaData,loading } = state
+  const { figmaData } = state
   const getCode = ()=>{
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
@@ -43,7 +43,7 @@ const App = ()=>{
       window.localStorage.setItem('figmaToken', token)
       dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:GetFileFromToken(token),dispatch})
     })
-    .catch(err => {throw '😅',err})
+    .catch(err => {throw new Error('😅',err)})
   }
 
   const retrieveToken = ()=>{
@@ -62,7 +62,9 @@ const App = ()=>{
     <PyroDispatchContext.Provider value={dispatch}>
       <PyroStateContext.Provider value={state}>
         <ProtoActions/>
-        {figmaData?<Frames/>:<Loading/>}
+        <section className="Prototype">
+          {figmaData?<Frames/>:<Loading/>}
+        </section>
       </PyroStateContext.Provider>
     </PyroDispatchContext.Provider>
   )

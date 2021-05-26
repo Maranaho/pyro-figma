@@ -2,6 +2,7 @@ import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import GetFileFromToken from '../../Utils/GetFileFromToken'
+import Dimensions from '../Dimensions'
 import pyro from '../../assets/images/pyro_white.svg'
 import './ProtoActions.css'
 
@@ -14,7 +15,7 @@ const ProtoActions = ()=>{
     setPagesOpen(false)
   }
   return (
-    <main className="ProtoActions">
+    <nav className="ProtoActions">
       <section>
         <img src={pyro} height="27" alt="pyro"/>
       </section>
@@ -32,12 +33,11 @@ const ProtoActions = ()=>{
         <h1 className="faded">Proto name - Page name</h1>
         }
       <section className="actions">
-        <button className="full">
-          <span>Share</span>
-        </button>
+        <button className="full"><span>Share</span></button>
+        <Dimensions/>
         <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch)}><i className="hi hi-refresh"/></button>
     </section>
-    </main>
+  </nav>
   )
 }
 export default ProtoActions

@@ -1,13 +1,46 @@
 let initialPyroState = {
   loading:true,
+  isMobile:true,
   figmaData:null,
   currentFrameIDX:0,
   currentPageIDX:0,
+  protoWidth:375,
+  protoHeight:812,
+  smoov:false,
   token:null
 }
 
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'REMOVE_SMOOV':
+      let REMOVE_SMOOV = {...state}
+      REMOVE_SMOOV.smoov = false
+    return REMOVE_SMOOV;
+
+    case 'SET_DESKTOP':
+      let SET_DESKTOP = {...state}
+      SET_DESKTOP.smoov = true
+      SET_DESKTOP.protoWidth = window.innerWidth
+      SET_DESKTOP.protoHeight = window.innerHeight - 34
+    return SET_DESKTOP;
+
+    case 'SET_MOBILE':
+      let SET_MOBILE = {...state}
+      SET_MOBILE.smoov = true
+      SET_MOBILE.protoWidth = 375
+      SET_MOBILE.protoHeight = 812
+    return SET_MOBILE;
+
+    case 'SET_WIDTH':
+      let SET_WIDTH = {...state}
+      SET_WIDTH.protoWidth = action.payload
+    return SET_WIDTH;
+
+    case 'SET_HEIGHT':
+      let SET_HEIGHT = {...state}
+      SET_HEIGHT.protoHeight = action.payload
+    return SET_HEIGHT;
 
     case 'SET_CURRENT_FRAME_IDX':
       let SET_CURRENT_FRAME_IDX = {...state}

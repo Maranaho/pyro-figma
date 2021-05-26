@@ -9,6 +9,12 @@ body {
   color: $dark;
 }
 
+#figma_pyro{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 
 p{margin: 0}
 
@@ -18,3 +24,14 @@ p{margin: 0}
   cursor: pointer;
 }
 button{cursor: pointer}
+
+.Prototype {
+  background: #262728;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #404243;
+  height: 100%;
+  box-sizing: border-box;
+  transition: .4s ease;
+}

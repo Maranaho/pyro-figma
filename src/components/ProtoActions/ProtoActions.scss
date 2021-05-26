@@ -35,7 +35,7 @@
         border: none;
         width:35px;
         &:hover{background: #515253}
-        i{font-size: 1.1em}
+        i{font-size: 1.3em}
     }
     &.full{
       background: #18a0fb;
@@ -45,7 +45,6 @@
       font-size: .8em;
       padding: 5px 15px;
       border-radius: 5px;
-      margin: 0 10px;
       &:hover{background: #44b4ff}
     }
     &:disabled{opacity: .5}
