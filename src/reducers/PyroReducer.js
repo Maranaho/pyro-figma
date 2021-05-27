@@ -6,10 +6,11 @@ let initialPyroState = {
   currentPageIDX:0,
   protoWidth:375,
   protoHeight:812,
+  minWidth:375,
+  minHeight:400,
   smoov:false,
   token:null
 }
-
 const PyroReducer = (state, action) => {
   switch (action.type) {
 

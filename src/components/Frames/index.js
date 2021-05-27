@@ -10,7 +10,7 @@ import './../../resize.css'
 const Frames = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov } = useContext(PyroStateContext)
+  const { figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
 
   const currentPage = figmaData.document.children[currentPageIDX]
   const handleResize = (e,{size}) =>{
@@ -29,17 +29,18 @@ const Frames = ()=>{
   }
 
   useEffect(protoStart,[figmaData])
+  if(!currentPage.children.length)return <Empty/>
   return (
     <Resizable
       maxConstraints={[window.innerWidth, window.innerHeight - 34]}
-      minConstraints={[375, 400]}
+      minConstraints={[minWidth, minHeight]}
       onResize={handleResize}
       width={protoWidth}
       height={protoHeight}>
       <main
         style={{"width":protoWidth,"height":protoHeight}}
         className={`Frames box ${isMobile?'mobile':'desktop'} ${smoov?'smoov':''}`}>
-        {currentPage.children.length? <Frame/>:<Empty/>}
+        <Frame/>
       </main>
     </Resizable>
   )

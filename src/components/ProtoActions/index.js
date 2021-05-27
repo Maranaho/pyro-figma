@@ -2,6 +2,7 @@ import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import GetFileFromToken from '../../Utils/GetFileFromToken'
+import InputDimensions from '../InputDimensions'
 import Dimensions from '../Dimensions'
 import pyro from '../../assets/images/pyro_white.svg'
 import './ProtoActions.css'
@@ -34,6 +35,7 @@ const ProtoActions = ()=>{
         }
       <section className="actions">
         <button className="full"><span>Share</span></button>
+        {true&&<InputDimensions/>}
         <Dimensions/>
         <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch)}><i className="hi hi-refresh"/></button>
     </section>
