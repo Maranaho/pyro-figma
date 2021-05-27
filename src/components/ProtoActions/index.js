@@ -35,8 +35,8 @@ const ProtoActions = ()=>{
         }
       <section className="actions">
         <button className="full"><span>Share</span></button>
-        {true&&<InputDimensions/>}
         <Dimensions/>
+        <InputDimensions/>
         <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch)}><i className="hi hi-refresh"/></button>
     </section>
   </nav>

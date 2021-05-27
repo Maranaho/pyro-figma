@@ -6,6 +6,8 @@ let initialPyroState = {
   currentPageIDX:0,
   protoWidth:375,
   protoHeight:812,
+  tabletWidth:1024,
+  tabletHeight:728,
   minWidth:375,
   minHeight:400,
   smoov:false,
@@ -18,6 +20,13 @@ const PyroReducer = (state, action) => {
       let REMOVE_SMOOV = {...state}
       REMOVE_SMOOV.smoov = false
     return REMOVE_SMOOV;
+
+    case 'SET_TABLET':
+      let SET_TABLET = {...state}
+      SET_TABLET.smoov = true
+      SET_TABLET.protoWidth = SET_TABLET.tabletWidth
+      SET_TABLET.protoHeight = SET_TABLET.tabletHeight
+    return SET_TABLET;
 
     case 'SET_DESKTOP':
       let SET_DESKTOP = {...state}
