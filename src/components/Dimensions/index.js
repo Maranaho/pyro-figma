@@ -31,7 +31,7 @@ const Dimensions = ()=>{
       <button
         disabled={smoov}
         onClick={()=>setDimensions("desktop")}
-        className={protoWidth > 450 ?'active':null}>
+        className={protoWidth > 1024 ?'active':null}>
         <img src={desktop} alt="desktop"/>
       </button>
       <button
