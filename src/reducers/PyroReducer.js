@@ -1,4 +1,5 @@
 let initialPyroState = {
+  figmaFile:"91MpGRzYJyF8ZruHDpUC6r",
   loading:true,
   isMobile:true,
   figmaData:null,
@@ -11,10 +12,16 @@ let initialPyroState = {
   minWidth:375,
   minHeight:400,
   smoov:false,
+  fileImages:null,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'GET_IMAGES':
+      let GET_IMAGES = {...state}
+      GET_IMAGES.fileImages = action.payload
+    return GET_IMAGES;
 
     case 'REMOVE_SMOOV':
       let REMOVE_SMOOV = {...state}

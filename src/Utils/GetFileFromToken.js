@@ -1,5 +1,6 @@
-const GetFileFromToken = (accessToken,dispatch) =>{
-  const figmaFile = "91MpGRzYJyF8ZruHDpUC6r"
+import GetImages from './GetImages'
+
+const GetFileFromToken = (accessToken,dispatch,figmaFile) =>{
   const url = "https://api.figma.com/v1/files/"+  figmaFile +"/"
 
   const myHeaders = new Headers()
@@ -14,7 +15,10 @@ const GetFileFromToken = (accessToken,dispatch) =>{
   dispatch({type:'LOADING'})
   fetch(url, requestOptions)
     .then(res => res.json())
-    .then(res => dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:res}))
+    .then(res => {
+      dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:res})
+      GetImages(figmaFile,accessToken,dispatch)
+    })
     .catch(err => console.error({err}))
 }
 

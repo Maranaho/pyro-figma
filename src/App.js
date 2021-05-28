@@ -19,7 +19,7 @@ const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
 const App = ()=>{
 
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
-  const { figmaData } = state
+  const { figmaData,token,figmaFile } = state
   const getCode = ()=>{
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
@@ -41,9 +41,9 @@ const App = ()=>{
     .then(res => {
       const token = JSON.parse(res).access_token
       window.localStorage.setItem('figmaToken', token)
-      dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:GetFileFromToken(token),dispatch})
+      GetFileFromToken(token,dispatch,figmaFile)
     })
-    .catch(err => {throw new Error('😅',err)})
+    .catch(err => console.error(err))
   }
 
   const retrieveToken = ()=>{
@@ -51,7 +51,7 @@ const App = ()=>{
     if (!tokenFromStorage) getToken()
     else {
       dispatch({type:'TOKEN',payload:tokenFromStorage})
-      GetFileFromToken(window.localStorage.getItem('figmaToken'),dispatch)
+      GetFileFromToken(window.localStorage.getItem('figmaToken'),dispatch,figmaFile)
     }
   }
 

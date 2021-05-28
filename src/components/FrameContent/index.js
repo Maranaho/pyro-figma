@@ -15,7 +15,7 @@ const FrameContent = ()=>{
   useEffect(yo,[currentFrameIDX])
   return (
     <section className="FrameContent">
-      <p>{currentPage.children[currentFrameIDX].name}</p>
+      
     </section>
   )
 }

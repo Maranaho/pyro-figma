@@ -3,6 +3,7 @@ import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import Gradients from '../Gradients'
 import SolidBG from '../SolidBG'
+import ImageBG from '../ImageBG'
 import FrameContent from '../FrameContent'
 import './Frame.css'
 
@@ -15,23 +16,27 @@ const Frame = ()=>{
     const key = currentPage.children[currentFrameIDX].id+idx
     switch (bg.type) {
 
-      case "GRADIENT_RADIAL":
-        return (
-            <Gradients
-              isLinear={false}
-              key={key}
-              bg={bg}/>
-          );break;
-
       case "GRADIENT_LINEAR":
         return (
             <Gradients
-              isLinear={true}
+              gradType="linear"
               key={key}
               bg={bg}/>
           );break;
 
+      case "GRADIENT_RADIAL":
+      case "GRADIENT_DIAMOND":
+      case "GRADIENT_ANGULAR":
+        return (
+            <Gradients
+              gradType="radial"
+              key={key}
+              bg={bg}/>
+          );break;
+
+      case "IMAGE": return <ImageBG bg={bg} key={key}/>;break;
       case "SOLID": return <SolidBG bg={bg} key={key}/>;break;
+
       default: return <SolidBG bg={bg} key={key}/>
     }
   }

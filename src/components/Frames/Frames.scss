@@ -1,7 +1,15 @@
 .Frames{
-  background: #fff;
   min-width: 375px;
   min-height: 400px;
   box-shadow: 0 20px 40px 0 rgba(0,0,0,.6);
+  position: relative;
+  .pageName{
+    color: rgba(255,255,255,.5);
+    font-weight: 300;
+    font-size: .85em;
+    position: absolute;
+    left:0;
+    top: -20px;
+  }
   &.smoov{transition: 1s cubic-bezier(0.89, 0.03, 0.25, 1)}
 }

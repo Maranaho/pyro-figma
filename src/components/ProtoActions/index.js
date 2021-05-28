@@ -1,4 +1,4 @@
-import React,{ useContext,useEffect,useState } from 'react'
+import React,{ useContext,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import GetFileFromToken from '../../Utils/GetFileFromToken'
@@ -9,12 +9,13 @@ import './ProtoActions.css'
 
 const ProtoActions = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { loading,figmaData,token,currentPageIDX } = useContext(PyroStateContext)
+  const { loading,figmaData,token,currentPageIDX,figmaFile } = useContext(PyroStateContext)
   const [ pagesOpen,setPagesOpen ] = useState(false)
   const handlePageMenuClick = e =>{
     dispatch({type:'SET_CURRENT_PAGE_IDX',payload:Number(e.target.getAttribute('idx'))})
     setPagesOpen(false)
   }
+
   return (
     <nav className="ProtoActions">
       <section>
@@ -37,7 +38,7 @@ const ProtoActions = ()=>{
         <button className="full"><span>Share</span></button>
         <Dimensions/>
         <InputDimensions/>
-        <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch)}><i className="hi hi-refresh"/></button>
+        <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch,figmaFile)}><i className="hi hi-refresh"/></button>
     </section>
   </nav>
   )

@@ -1,19 +1,19 @@
 import React,{ useEffect } from 'react'
+import RenderedColor from '../../Utils/RenderedColor'
 import './SolidBG.css'
 
 const SolidBG = ({bg})=>{
-
-  const makeSolidBG =()=>{
-    console.log(bg);
+  const sldBg = ()=>{
+    return {
+      background:RenderedColor(bg.color),
+      opacity: bg.opacity,
+      mixBlendMode: bg.blendMode.toLowerCase().split('_').join('-')
+    }
   }
-
-
-
-  useEffect(makeSolidBG,[])
   return (
-    <div className="SolidBG">
-      solid
-    </div>
+    <div
+      className="SolidBG"
+      style={sldBg()}/>
   )
 }
 export default SolidBG
