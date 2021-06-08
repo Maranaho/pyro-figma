@@ -1,1 +1,1 @@
-.Frames{min-width:375px;min-height:400px;box-shadow:0 20px 40px 0 rgba(0,0,0,0.6);position:relative}.Frames .pageName{color:rgba(255,255,255,0.5);font-weight:300;font-size:.85em;position:absolute;left:0;top:-20px}.Frames.smoov{transition:1s cubic-bezier(0.89, 0.03, 0.25, 1)}
+.Frames{min-width:375px;min-height:400px;position:relative;background:#E5E5E5}.Frames .pageName{color:rgba(255,255,255,0.5);font-weight:300;font-size:.85em;position:absolute;left:0;top:-20px}.Frames.smoov{transition:1s cubic-bezier(0.89, 0.03, 0.25, 1)}

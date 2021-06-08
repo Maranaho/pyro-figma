@@ -1,0 +1,12 @@
+.Text{
+  &:not(.flexChild){
+    position: absolute;
+  }
+  &.flexChild{
+    position: relative;
+    z-index: 2;
+    border: 1px solid red;
+  }
+  margin: 0;
+  z-index: 1;
+}

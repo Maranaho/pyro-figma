@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react'
+import React from 'react'
 import RenderedColor from '../../Utils/RenderedColor'
 import './SolidBG.css'
 
@@ -10,10 +10,6 @@ const SolidBG = ({bg})=>{
       mixBlendMode: bg.blendMode.toLowerCase().split('_').join('-')
     }
   }
-  return (
-    <div
-      className="SolidBG"
-      style={sldBg()}/>
-  )
+  return <div className="SolidBG" style={sldBg()}/>
 }
 export default SolidBG

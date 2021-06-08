@@ -29,7 +29,9 @@ const Frames = ()=>{
   }
 
   useEffect(protoStart,[figmaData])
-  if(!currentPage.children.length)return <Empty/>
+
+  if(!figmaData.document.children[currentPageIDX].children.length)return <Empty/>
+  if(currentFrameIDX === null)return null
   return (
     <Resizable
       maxConstraints={[window.innerWidth, window.innerHeight - 34]}

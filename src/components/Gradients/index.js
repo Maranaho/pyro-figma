@@ -1,13 +1,12 @@
 import React,{ useRef,useEffect,useContext } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
-import PyroDispatchContext from '../../context/PyroDispatchContext'
 import RenderedColor from '../../Utils/RenderedColor'
 import './Gradients.css'
 
 const Gradients = ({bg,gradType})=>{
   const { protoWidth,protoHeight,figmaData } = useContext(PyroStateContext)
   const canvasRef = useRef(null)
-  const { blendMode,gradientHandlePositions,gradientStops } = bg
+  const { opacity,blendMode,gradientHandlePositions,gradientStops } = bg
 
   const makeGradients =()=>{
     const startGradient = gradientHandlePositions[0]
@@ -37,8 +36,8 @@ const Gradients = ({bg,gradType})=>{
 
   const bgBlend = ()=> {
     return {
-      opacity: bg.opacity,
-      mixBlendMode: bg.blendMode.toLowerCase().split('_').join('-')
+      opacity: opacity,
+      mixBlendMode: blendMode.toLowerCase().split('_').join('-')
     }
   }
 

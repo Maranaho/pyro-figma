@@ -1,4 +1,4 @@
-import React,{ useEffect,useContext } from 'react'
+import React,{ useContext } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import './ImageBG.css'
 
