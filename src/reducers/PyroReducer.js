@@ -95,6 +95,7 @@ const PyroReducer = (state, action) => {
       let UPDATE_FILE_DATA_FROM_FIGMA = {...state}
       UPDATE_FILE_DATA_FROM_FIGMA.figmaData = action.payload
       UPDATE_FILE_DATA_FROM_FIGMA.loading = false
+      UPDATE_FILE_DATA_FROM_FIGMA.nodeTree = null
     return UPDATE_FILE_DATA_FROM_FIGMA;
 
 

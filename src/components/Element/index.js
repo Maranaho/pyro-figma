@@ -2,11 +2,13 @@ import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import Background from '../Background'
+import Vector from '../Vector'
+import Text from '../Text'
 import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX,nodeTree } = useContext(PyroStateContext)
+  const { figmaData,currentPageIDX,currentFrameIDX,nodeTree,protoWidth,protoHeight } = useContext(PyroStateContext)
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
   const { visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
@@ -19,10 +21,10 @@ const Element = ({node,parent}) =>{
   const setDimension =()=>{
     const { width,height } = absoluteBoundingBox
     switch (constraints.horizontal) {
-      case "LEFT":case "RIGHT":tempStyle.width = width;break;
+      case "CENTER":case "LEFT":case "RIGHT":tempStyle.width = width;break;
     }
     switch (constraints.vertical) {
-      case "TOP":case "BOTTOM":tempStyle.height = height;break;
+      case "CENTER":case "TOP":case "BOTTOM":tempStyle.height = height;break;
     }
   }
 
@@ -43,8 +45,6 @@ const Element = ({node,parent}) =>{
 
 
   const setFlex =()=>{
-    console.clear()
-    console.log(node);
     const { primaryAxisAlignItems,counterAxisAlignItems } = node
     tempStyle.display = "flex"
     if(layoutMode === 'VERTICAL')tempStyle.flexDirection = 'column'
@@ -55,9 +55,7 @@ const Element = ({node,parent}) =>{
     tempStyle.boxSizing = "border-box"
   }
 
-  const setText =()=>{
-    tempStyle.fontSize = 12
-  }
+
 
   const setPosition =()=>{
     const { x,y,width,height } = absoluteBoundingBox
@@ -71,6 +69,10 @@ const Element = ({node,parent}) =>{
         tempStyle.left = left
         tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
       ;break;
+      case "CENTER":
+        tempStyle.left = left / Math.round(protoWidth) *100 + "%"
+        tempStyle.right = (currentFrame.absoluteBoundingBox.width - (width + left)) / Math.round(protoWidth) *100 + "%"
+      ;break;
     }
     switch (constraints.vertical) {
       case "TOP":tempStyle.top = y - currentFrame.absoluteBoundingBox.y;break;
@@ -78,6 +80,10 @@ const Element = ({node,parent}) =>{
       case "TOP_BOTTOM":
         tempStyle.top = top
         tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
+      ;break;
+      case "CENTER":
+        tempStyle.top = top / Math.round(protoHeight) *100 + "%"
+        tempStyle.bottom = (currentFrame.absoluteBoundingBox.height - (height + left)) / Math.round(protoHeight) *100 + "%"
       ;break;
     }
   }
@@ -95,7 +101,18 @@ const Element = ({node,parent}) =>{
   const setChild =()=>{
     const itemSpacing = nodeTree[parent].itemSpacing
     const firstChild = nodeTree[parent].children[0].id === id
-    if(!firstChild)tempStyle.marginLeft = itemSpacing
+    if(!firstChild)tempStyle[nodeTree[parent].layoutMode==="VERTICAL"?"marginTop":"marginLeft"] = itemSpacing
+  }
+
+  const setRadius=()=>{
+    if(node.hasOwnProperty("rectangleCornerRadii")){
+      const radius = node.rectangleCornerRadii.reduce((acc,itm,idx)=>{
+        acc = acc + itm+"px "
+        return acc
+      },"")
+      tempStyle.borderRadius = radius
+      tempStyle.overflow = "hidden"
+    }
   }
 
   useEffect(()=>{
@@ -106,7 +123,7 @@ const Element = ({node,parent}) =>{
     dispatch({type:'ADD_CHILD_ELEMENT',payload:node})
     if(nodeTree){
       setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
-      setText()
+      setRadius()
       if(flexParent)setFlex()
       setDimension()
       if(!flexChild)setPosition()
@@ -116,6 +133,8 @@ const Element = ({node,parent}) =>{
     }
   },[figmaData,nodeTree,flexChild])
 
+  if(type==="VECTOR")return <Vector style={nodeStyle} node={node}/>
+  if(type==="TEXT")return <Text style={nodeStyle} node={node}/>
   return (
     <article style={nodeStyle} className={`Element ${node.name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''}`}>
       {type!=="TEXT"&&<Background element={node}/>}

@@ -8,31 +8,34 @@ const Background = ({ element })=>{
 
   const makeBackground = (bg,idx) => {
     const key = element.id+idx
-    switch (bg.type) {
+    if (!bg.hasOwnProperty("visible")||bg.visible) {
+      switch (bg.type) {
 
-      case "GRADIENT_LINEAR":
-        return (
-            <Gradients
-              gradType="linear"
-              key={key}
-              bg={bg}/>
-          );break;
+        case "GRADIENT_LINEAR":
+          return (
+              <Gradients
+                gradType="linear"
+                key={key}
+                bg={bg}/>
+            );break;
 
-      case "GRADIENT_RADIAL":
-      case "GRADIENT_DIAMOND":
-      case "GRADIENT_ANGULAR":
-        return (
-            <Gradients
-              gradType="radial"
-              key={key}
-              bg={bg}/>
-          );break;
+        case "GRADIENT_RADIAL":
+        case "GRADIENT_DIAMOND":
+        case "GRADIENT_ANGULAR":
+          return (
+              <Gradients
+                gradType="radial"
+                key={key}
+                bg={bg}/>
+            );break;
 
-      case "IMAGE": return <ImageBG bg={bg} key={key}/>;break;
-      case "SOLID": return <SolidBG bg={bg} key={key}/>;break;
+        case "IMAGE": return <ImageBG bg={bg} key={key}/>;break;
+        case "SOLID": return <SolidBG bg={bg} key={key}/>;break;
 
-      default: return <SolidBG bg={bg} key={key}/>
+        default: return <SolidBG bg={bg} key={key}/>
+      }
     }
+    return null
   }
   if(!element.hasOwnProperty("background")&&!element.hasOwnProperty("fills"))return null
   return (
