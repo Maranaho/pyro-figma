@@ -38,7 +38,6 @@ const getStyles = ()=>{
   }
 
   txtStyles.color = RenderedColor(node.fills[0].color)
-  console.log({...posStyle,...textStyles});
   setTextStyles(txtStyles)
 }
 useEffect(getStyles,[])

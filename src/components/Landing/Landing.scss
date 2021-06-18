@@ -1,0 +1,54 @@
+.Landing{
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 60vw;
+  width: clamp(60vw,40vw,500px);
+  margin: 200px auto 0;
+  position: relative;
+  >section{
+    display: flex;
+    align-items: baseline;
+    flex-direction: column;
+    margin-bottom: 30px;
+    form{
+      display: flex;
+      flex:1;
+      width: 100%;
+    }
+  }
+  .emailInput {
+    background: none;
+    border:none;
+    font-size: 1.9em;
+    padding: 0;
+    flex: 1;
+    outline: none;
+    border-bottom: 1px solid rgba(217,217,217,0);
+    transition: border .3s ease;
+    &.type{
+      border-bottom: 1px solid rgba(217,217,217,1);
+      &:focus{border-bottom: 1px solid rgba(24,160,251,0)}
+    }
+  }
+  p{
+    font-size: .95em;
+    opacity: .7;
+  }
+  h2{
+    font-size: 1.2em;
+    font-size: clamp(1em,1.9em,5vw);
+    font-weight: 300;
+    margin: 0;
+  }
+  strong{font-weight: 800}
+  .formBtnCtn{
+    display: flex;
+    justify-content: space-between;
+  }
+  .btnCtn{
+    margin-top: 50px;
+    span{margin-right: 20px}
+  }
+}

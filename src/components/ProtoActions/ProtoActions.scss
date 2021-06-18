@@ -31,28 +31,15 @@
     margin: 0;
     &.faded{opacity: .7}
   }
-  button{
-    &:not(.full) {
-        height: 100%;
-        margin: 0;
-        background: none;
-        color: #fff;
-        border: none;
-        width:35px;
-        &:hover{background: #515253}
-        i{font-size: 1.3em}
-    }
-    &.full{
-      background: #18a0fb;
-      border: none;
+  button:not(.full) {
+      height: 100%;
+      margin: 0;
+      background: none;
       color: #fff;
-      text-transform: uppercase;
-      font-size: .8em;
-      padding: 5px 15px;
-      border-radius: 5px;
-      &:hover{background: #44b4ff}
-    }
-    &:disabled{opacity: .5}
+      border: none;
+      width:35px;
+      &:hover{background: #515253}
+      i{font-size: 1.3em}
   }
   .pagesMenu{
     position: absolute;

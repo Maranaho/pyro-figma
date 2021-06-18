@@ -5,13 +5,13 @@ import './Vector.css'
 const Vector = ({node,style}) =>{
 const { name } = node
 const setVector = ()=>{
-
+  console.log(style);
 }
 useEffect(setVector,[])
   return (
-    <article style={style} className={`Vector ${node.name.split(' ').join('_')}`}>
-      Vector
-    </article>
+    <div style={style} className={`Vector ${node.name.split(' ').join('_')}`}>
+      {name}
+    </div>
   )
 }
 

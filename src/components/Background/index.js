@@ -30,18 +30,18 @@ const Background = ({ element })=>{
             );break;
 
         case "IMAGE": return <ImageBG bg={bg} key={key}/>;break;
-        case "SOLID": return <SolidBG bg={bg} key={key}/>;break;
 
         default: return <SolidBG bg={bg} key={key}/>
       }
     }
     return null
   }
+  
   if(!element.hasOwnProperty("background")&&!element.hasOwnProperty("fills"))return null
   return (
     <section className="Background">
-      {element.hasOwnProperty("background")&&element.background.map((bg,idx)=>makeBackground(bg,idx))}
-      {element.hasOwnProperty("fills")&&element.fills.map((bg,idx)=>makeBackground(bg,idx))}
+      {(element.hasOwnProperty("background")&&element.background.length>0)&&element.background.map((bg,idx)=>makeBackground(bg,idx))}
+      {(element.hasOwnProperty("fills")&&element.fills.length>0)&&element.fills.map((bg,idx)=>makeBackground(bg,idx))}
     </section>
   )
 }

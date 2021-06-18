@@ -1,1 +1,1 @@
-.Element{position:relative}
+.Element{position:relative}.centerParent{width:100%;left:0;right:0;display:flex;justify-content:center}.centerParent .childStyle{position:relative}.centerParent .childStyle .Element{top:inherit !important;bottom:inherit !important}.centerParent .childStyle.isLeft .Element{left:0 !important}.centerParent .childStyle.isright .Element{right:0 !important}

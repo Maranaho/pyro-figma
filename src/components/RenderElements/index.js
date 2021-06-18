@@ -10,9 +10,12 @@ const RenderElements = ()=>{
   const { figmaData,currentPageIDX,currentFrameIDX,nodeTree } = useContext(PyroStateContext)
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
+  const parentStyle = {
+    minHeight:currentPage.children[currentFrameIDX].absoluteBoundingBox.height
+  }
   useEffect(()=>dispatch({type:'ADD_CHILD_ELEMENT',payload:currentFrame}),[])
   return (
-    <section className="RenderElements">
+    <section style={parentStyle} className="RenderElements">
       {currentFrame.children.map(child=>(
         <Element
           key={child.id}

@@ -2,8 +2,10 @@ import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import Background from '../Background'
+import Stroke from '../Stroke'
 import Vector from '../Vector'
 import Text from '../Text'
+import Ellipse from '../Ellipse'
 import './Element.css'
 
 const Element = ({node,parent}) =>{
@@ -63,27 +65,19 @@ const Element = ({node,parent}) =>{
     const top = y - currentFrame.absoluteBoundingBox.y
     const left = x - currentFrame.absoluteBoundingBox.x
     switch (constraints.horizontal) {
-      case "LEFT":tempStyle.left = x - currentFrame.absoluteBoundingBox.x;break;
+      case "LEFT":case "CENTER":tempStyle.left = x - currentFrame.absoluteBoundingBox.x;break;
       case "RIGHT":tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
       case "LEFT_RIGHT":
         tempStyle.left = left
         tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
       ;break;
-      case "CENTER":
-        tempStyle.left = left / Math.round(protoWidth) *100 + "%"
-        tempStyle.right = (currentFrame.absoluteBoundingBox.width - (width + left)) / Math.round(protoWidth) *100 + "%"
-      ;break;
     }
     switch (constraints.vertical) {
-      case "TOP":tempStyle.top = y - currentFrame.absoluteBoundingBox.y;break;
+      case "TOP":case "CENTER":tempStyle.top = y - currentFrame.absoluteBoundingBox.y;break;
       case "BOTTOM":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
       case "TOP_BOTTOM":
         tempStyle.top = top
         tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
-      ;break;
-      case "CENTER":
-        tempStyle.top = top / Math.round(protoHeight) *100 + "%"
-        tempStyle.bottom = (currentFrame.absoluteBoundingBox.height - (height + left)) / Math.round(protoHeight) *100 + "%"
       ;break;
     }
   }
@@ -133,21 +127,56 @@ const Element = ({node,parent}) =>{
     }
   },[figmaData,nodeTree,flexChild])
 
-  if(type==="VECTOR")return <Vector style={nodeStyle} node={node}/>
-  if(type==="TEXT")return <Text style={nodeStyle} node={node}/>
-  return (
-    <article style={nodeStyle} className={`Element ${node.name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''}`}>
-      {type!=="TEXT"&&<Background element={node}/>}
-      {node.children&&node.children.map(child=>{
-        return (
-          <Element
-            parent={node.id}
-            key={child.id}
-            node={child}/>
-        )
-      })}
-    </article>
-  )
+  let renderThis
+  switch (type) {
+    case "VECTOR":renderThis = <Vector style={nodeStyle} node={node}/>;break;
+    case "TEXT":renderThis = <Text style={nodeStyle} node={node}/>;break;
+    case "ELLIPSE":renderThis = <Ellipse style={nodeStyle} node={node}/>;break;
+    default: renderThis = (
+      <article style={nodeStyle} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''}`}>
+        {(type!=="TEXT"&&type!=="VECTOR")&&<Background element={node}/>}
+        {(type!=="TEXT"&&type!=="VECTOR")&&<Stroke element={node}/>}
+        {node.children&&node.children.map(child=>{
+          return (
+            <Element
+              parent={node.id}
+              key={child.id}
+              node={child}/>
+          )
+        })}
+      </article>
+    )
+
+  }
+  if(node.constraints.horizontal === "CENTER") {
+    const centerParent = {...nodeStyle}
+    const childStyle = {...nodeStyle}
+    delete centerParent.width
+    delete centerParent.left
+    delete centerParent.right
+
+    const isLeft = childStyle.hasOwnProperty('left')
+    const calcChildWidth = isLeft?childStyle.left*2:childStyle.right*2
+    delete childStyle.position
+    delete childStyle.left
+    delete childStyle.top
+    delete childStyle.right
+    delete childStyle.bottom
+    childStyle.width = currentFrame.absoluteBoundingBox.width-calcChildWidth
+    return (
+      <main
+        style={centerParent}
+        className="centerParent">
+        <section
+          className={`childStyle ${isLeft?'isLeft':'isRight'}`}
+          style={childStyle}>{renderThis}</section>
+      </main>
+    )
+  }
+  else return renderThis
+
+
+
 }
 
 export default Element

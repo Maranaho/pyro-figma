@@ -1,4 +1,4 @@
-const GetImages = (figmaFile,token,dispatch) =>{
+const GetMe = (token,dispatch) =>{
   const myHeaders = new Headers()
   myHeaders.append("Authorization", "Bearer " + token)
 
@@ -7,10 +7,10 @@ const GetImages = (figmaFile,token,dispatch) =>{
     headers: myHeaders,
     redirect: 'follow'
   }
-  fetch("https://api.figma.com/v1/files/"+figmaFile+"/images", requestOptions)
+  fetch("https://api.figma.com/v1/me", requestOptions)
     .then(res => res.json())
-    .then(res => dispatch({type:'GET_IMAGES',payload:res.meta.images}))
+    .then(res => dispatch({type:'GET_ME',payload:res}))
     .catch(err => console.error(err))
  }
 
-export default GetImages
+export default GetMe

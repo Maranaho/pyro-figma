@@ -8,7 +8,6 @@ body {
   font-size: 14px;
   color: $dark;
   overflow: hidden;
-  background: #262728;
 }
 
 #figma_pyro{
@@ -18,15 +17,41 @@ body {
   justify-content: space-between;
 }
 
+.FigmaProto{
+  background: #262728;
+  height: 100%;
+}
 
 p{margin: 0}
+
+.shallowLink{
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 .a,a {
   color: #2196f3;
   text-decoration: underline;
   cursor: pointer;
 }
-button{cursor: pointer}
+.btn{
+  cursor: pointer;
+  &.full{
+    a{
+      color: #fff;
+      text-decoration: none;
+    }
+    background: #18a0fb;
+    border: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: .8em;
+    padding: 5px 15px;
+    border-radius: 5px;
+    &:hover{background: #44b4ff}
+  }
+  &:disabled{opacity: .5}
+}
 
 .Prototype {
   display: flex;

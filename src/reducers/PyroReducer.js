@@ -3,7 +3,7 @@ let initialPyroState = {
   loading:true,
   isMobile:true,
   figmaData:null,
-  currentFrameIDX:null,
+  currentFrameIDX:0,
   currentPageIDX:0,
   protoWidth:375,
   protoHeight:812,
@@ -14,6 +14,7 @@ let initialPyroState = {
   smoov:false,
   fileImages:null,
   nodeTree:null,
+  me:null,
   token:null
 }
 const PyroReducer = (state, action) => {
@@ -29,6 +30,11 @@ const PyroReducer = (state, action) => {
       if(!ADD_CHILD_ELEMENT.nodeTree)ADD_CHILD_ELEMENT.nodeTree = {}
       ADD_CHILD_ELEMENT.nodeTree[action.payload.id] = action.payload
     return ADD_CHILD_ELEMENT;
+
+    case 'GET_ME':
+      let GET_ME = {...state}
+      GET_ME.me = action.payload
+    return GET_ME;
 
     case 'GET_IMAGES':
       let GET_IMAGES = {...state}

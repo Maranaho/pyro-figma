@@ -1,3 +1,19 @@
 .Element{
   position: relative;
 }
+.centerParent{
+  width: 100%;
+  left:0;
+  right:0;
+  display: flex;
+  justify-content: center;
+  .childStyle {
+    position: relative;
+    .Element{
+      top:inherit !important;
+      bottom:inherit !important;
+    }
+    &.isLeft .Element {left:0 !important}
+    &.isright .Element {right:0 !important}
+  }
+}
