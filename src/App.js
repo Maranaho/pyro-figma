@@ -1,24 +1,90 @@
 import { useReducer,useEffect,useState } from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import FireBaseInit from './Utils/FireBaseInit'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
 import PyroStateContext from './context/PyroStateContext'
 import PyroDispatchContext from './context/PyroDispatchContext'
 import PyroReducer, { initialPyroState } from './reducers/PyroReducer'
+import GetFileFromToken from './Utils/GetFileFromToken'
+import GetMe from './Utils/GetMe'
 import Prototype from './components/Prototype'
 import Landing from './components/Landing'
 import './bolt_fonts.css'
 import './assets/iconfont/harmonyicons.css'
 import './App.css'
-const App = ()=>{
 
+firebase.initializeApp(FireBaseInit)
+
+const FIGMA_CLIENT_ID = process.env.REACT_APP_FIGMA_CLIENT_ID
+const FIGMA_SECRET = process.env.REACT_APP_FIGMA_SECRET
+const URL_CB = process.env.REACT_APP_URL_CB
+const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
+
+const App = ()=>{
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
+  const { figmaData,figmaFile,loading,token,me } = state
+  const firestore = firebase.firestore()
+  const fileDB = firestore.collection('figma-files').doc(figmaFile).collection("fileData")
+  const selectionDB = fileDB.doc("users").collection("selections")
+  const querySelect = selectionDB.where("email", "==", me?me.email:'null')
+  const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
+  const [selection] = useCollectionData(querySelect,{idField:'id'})
+
+    const getCode = ()=>{
+      const queryString = window.location.search
+      const urlParams = new URLSearchParams(queryString)
+      return urlParams.get('code')
+    }
+
+    const getToken = () => {
+      const myHeaders = new Headers()
+      myHeaders.append("Cookie", "figma.session="+FIGMA_SESSION)
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        redirect: 'follow'
+      }
+
+    fetch("https://www.figma.com/api/oauth/token?client_id="+FIGMA_CLIENT_ID+"&client_secret="+FIGMA_SECRET+"&redirect_uri="+URL_CB+"&code="+ getCode() +"&grant_type=authorization_code", requestOptions)
+      .then(res => res.text())
+      .then(res => {
+        const token = JSON.parse(res).access_token
+        if(token){
+          window.localStorage.setItem('figmaToken', token)
+          GetFileFromToken(token,dispatch,figmaFile)
+        }
+      })
+      .catch(err => console.error(err))
+    }
+
+    const retrieveToken = ()=>{
+      const tokenFromStorage = window.localStorage.getItem('figmaToken')
+      if (!tokenFromStorage) getToken()
+      else {
+        dispatch({type:'TOKEN',payload:tokenFromStorage})
+        GetFileFromToken(window.localStorage.getItem('figmaToken'),dispatch,figmaFile)
+      }
+    }
+
+
+    const getSelection =()=>{
+      if(selection&&selection.length)dispatch({type:'SET_SELECTION',payload:selection[0]})
+    }
+    const getVector =()=>{
+      if(vectorDB&&vectorDB.length)dispatch({type:'SET_VECTORS',payload:vectorDB[1]})
+    }
+
+    useEffect(()=>{
+      if(figmaData&&token)GetMe(token,dispatch)
+    },[figmaData,token])
+    useEffect(getSelection,[selection])
+    useEffect(getVector,[vectorDB])
+    useEffect(retrieveToken,[])
   return (
     <PyroDispatchContext.Provider value={dispatch}>
-      <PyroStateContext.Provider value={state}><Router>
-          <Switch>
-            <Route exact path="/figma/:params" component={Prototype} />
-            <Route path="/figma/prototype" component={Prototype} />
-          </Switch>
-        </Router>
+      <PyroStateContext.Provider value={state}>
+        <Prototype/>
       </PyroStateContext.Provider>
     </PyroDispatchContext.Provider>
   )

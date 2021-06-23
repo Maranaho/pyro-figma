@@ -11,7 +11,6 @@ const Frames = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
   const { figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
-
   const currentPage = figmaData.document.children[currentPageIDX]
   const handleResize = (e,{size}) =>{
     const { width,height } = size
@@ -29,7 +28,6 @@ const Frames = ()=>{
   }
 
   useEffect(protoStart,[figmaData])
-
   if(!figmaData.document.children[currentPageIDX].children.length)return <Empty/>
   return (
     <Resizable

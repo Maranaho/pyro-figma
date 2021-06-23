@@ -10,7 +10,8 @@ import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX,nodeTree,protoWidth,protoHeight } = useContext(PyroStateContext)
+  const { vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
+
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
   const { visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
@@ -62,8 +63,8 @@ const Element = ({node,parent}) =>{
   const setPosition =()=>{
     const { x,y,width,height } = absoluteBoundingBox
     tempStyle.position = "absolute"
-    const top = y - currentFrame.absoluteBoundingBox.y
-    const left = x - currentFrame.absoluteBoundingBox.x
+    let top = y - currentFrame.absoluteBoundingBox.y
+    let left = x - currentFrame.absoluteBoundingBox.x
     switch (constraints.horizontal) {
       case "LEFT":case "CENTER":tempStyle.left = x - currentFrame.absoluteBoundingBox.x;break;
       case "RIGHT":tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
@@ -79,6 +80,25 @@ const Element = ({node,parent}) =>{
         tempStyle.top = top
         tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
       ;break;
+    }
+    if(nodeTree.hasOwnProperty(parent)){
+      const parentPos = nodeTree[parent].absoluteBoundingBox
+      switch (constraints.horizontal) {
+        case "LEFT":case "CENTER":tempStyle.left = tempStyle.left - parentPos.x;break;
+        case "RIGHT":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
+        case "LEFT_RIGHT":
+          tempStyle.left = tempStyle.left - parentPos.x
+          tempStyle.right = tempStyle.right - parentPos.width - (width + left)
+        ;break;
+      }
+      switch (constraints.vertical) {
+        case "TOP":case "CENTER":tempStyle.top = tempStyle.top - parentPos.y;break;
+        case "BOTTOM":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
+        case "TOP_BOTTOM":
+          tempStyle.top = tempStyle.top - parentPos.y
+          tempStyle.bottom = tempStyle.bottom - parentPos.width - (width + left)
+        ;break;
+      }
     }
   }
 
@@ -116,7 +136,7 @@ const Element = ({node,parent}) =>{
   useEffect(()=>{
     dispatch({type:'ADD_CHILD_ELEMENT',payload:node})
     if(nodeTree){
-      setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
+      if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
       if(flexParent)setFlex()
       setDimension()
@@ -129,7 +149,9 @@ const Element = ({node,parent}) =>{
 
   let renderThis
   switch (type) {
-    case "VECTOR":renderThis = <Vector style={nodeStyle} node={node}/>;break;
+    case "VECTOR":
+      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector style={nodeStyle} node={node}/>
+      else return null;break;
     case "TEXT":renderThis = <Text style={nodeStyle} node={node}/>;break;
     case "ELLIPSE":renderThis = <Ellipse style={nodeStyle} node={node}/>;break;
     default: renderThis = (
@@ -163,6 +185,8 @@ const Element = ({node,parent}) =>{
     delete childStyle.right
     delete childStyle.bottom
     childStyle.width = currentFrame.absoluteBoundingBox.width-calcChildWidth
+    if(!centerParent.width)delete centerParent.width
+    if(!childStyle.width)delete childStyle.width
     return (
       <main
         style={centerParent}

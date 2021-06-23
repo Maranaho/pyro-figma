@@ -1,0 +1,31 @@
+.ConfirmEmail{
+  >section{
+    display: flex;
+    align-items: baseline;
+    flex-direction: column;
+    margin-bottom: 30px;
+    form{
+      display: flex;
+      flex:1;
+      width: 100%;
+    }
+  }
+  .emailInput {
+    background: none;
+    border:none;
+    font-size: 1.9em;
+    padding: 0;
+    flex: 1;
+    outline: none;
+    border-bottom: 1px solid rgba(217,217,217,0);
+    transition: border .3s ease;
+    &.type{
+      border-bottom: 1px solid rgba(217,217,217,1);
+      &:focus{border-bottom: 1px solid rgba(24,160,251,0)}
+    }
+  }
+  .formBtnCtn{
+    display: flex;
+    justify-content: space-between;
+  }
+}

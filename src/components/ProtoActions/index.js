@@ -16,6 +16,7 @@ const ProtoActions = ()=>{
     dispatch({type:'SET_CURRENT_PAGE_IDX',payload:Number(e.target.getAttribute('idx'))})
     setPagesOpen(false)
   }
+
   return (
     <nav className="ProtoActions">
       <section>
@@ -35,7 +36,7 @@ const ProtoActions = ()=>{
         <h1 className="faded">Proto name - Page name</h1>
         }
       <section className="actions">
-        <button className="full"><span>Share</span></button>
+        <button className="btn full"><span>Share</span></button>
         <Dimensions/>
         <InputDimensions/>
         {me&&<User/>}

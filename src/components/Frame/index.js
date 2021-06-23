@@ -13,8 +13,8 @@ const Frame = ()=>{
   }
   return (
     <section style={parentStyle} className="Frame">
-      {currentPage.children[currentFrameIDX].background.length>0&&<Background element={currentPage.children[currentFrameIDX]}/>}
-      {currentPage.children[currentFrameIDX].strokes.length > 0&&<Stroke element={currentPage.children[currentFrameIDX]}/>}
+      {(currentPage.children[currentFrameIDX].hasOwnProperty('background')&&currentPage.children[currentFrameIDX].background.length>0)&&<Background element={currentPage.children[currentFrameIDX]}/>}
+      {(currentPage.children[currentFrameIDX].hasOwnProperty('strokes')&&currentPage.children[currentFrameIDX].strokes.length>0)&&<Stroke element={currentPage.children[currentFrameIDX]}/>}
       <RenderElements/>
     </section>
   )
