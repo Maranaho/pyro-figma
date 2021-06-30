@@ -19,11 +19,30 @@ let initialPyroState = {
   selection:null,
   vectors:null,
   me:null,
+  breakPoints:null,
+  currentBreakpoint:0,
+  direction:false,
   email:null,
+  rotations:null,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'SET_DIRECTION':
+      let SET_DIRECTION = {...state}
+      SET_DIRECTION.direction = action.payload
+    return SET_DIRECTION;
+
+    case 'SET_CURRENT_BPOINT':
+      let SET_CURRENT_BPOINT = {...state}
+      SET_CURRENT_BPOINT.currentBreakpoint = action.payload
+    return SET_CURRENT_BPOINT;
+
+    case 'SET_BREAKPOINTS':
+      let SET_BREAKPOINTS = {...state}
+      SET_BREAKPOINTS.breakPoints = action.payload
+    return SET_BREAKPOINTS;
 
     case 'SET_SELECTION':
       let SET_SELECTION = {...state}
@@ -31,6 +50,11 @@ const PyroReducer = (state, action) => {
       SET_SELECTION.currentPageID = action.payload.currentPage
       SET_SELECTION.selection = action.payload.selection
     return SET_SELECTION;
+
+    case 'SET_ROTATES':
+      let SET_ROTATES = {...state}
+      SET_ROTATES.rotations = action.payload
+    return SET_ROTATES;
 
     case 'SET_VECTORS':
       let SET_VECTORS = {...state}

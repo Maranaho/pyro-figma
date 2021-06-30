@@ -1,6 +1,7 @@
 import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
+import RenderedColor from '../../Utils/RenderedColor'
 import Background from '../Background'
 import Stroke from '../Stroke'
 import Vector from '../Vector'
@@ -10,11 +11,11 @@ import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
+  const { rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
 
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
-  const { visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
+  const { transitionNodeID,opacity,effects,visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
   const [ parentNode,setParentNode ] = useState(currentFrame)
   const [ nodeStyle,setNodeStyle ] = useState(null)
   const [ flexChild,setFlexChild ] = useState(false)
@@ -24,13 +25,19 @@ const Element = ({node,parent}) =>{
   const setDimension =()=>{
     const { width,height } = absoluteBoundingBox
     switch (constraints.horizontal) {
-      case "CENTER":case "LEFT":case "RIGHT":tempStyle.width = width;break;
+      case "CENTER":case "LEFT":case "RIGHT":
+        if(node.layoutAlign!=='STRETCH')tempStyle.width = width;
+      break;
     }
     switch (constraints.vertical) {
-      case "CENTER":case "TOP":case "BOTTOM":tempStyle.height = height;break;
+      case "CENTER":case "TOP":case "BOTTOM":
+        if(node.layoutGrow!== 1)tempStyle.height = height
+        else tempStyle.height = "100%";
+      break;
     }
   }
 
+  const setOpacity =()=> tempStyle.opacity = opacity.toFixed(2)
   const setAxis= priority =>{
     let axis = null
     if (priority !== undefined) {
@@ -58,7 +65,23 @@ const Element = ({node,parent}) =>{
     tempStyle.boxSizing = "border-box"
   }
 
-
+  const setEffects =()=>{
+    if(effects){
+      effects.forEach(fx => {
+        const {type:fxType,offset,radius,visible,color} = fx
+        if (visible) {
+          switch (fxType) {
+            case "DROP_SHADOW":
+              const { x,y } = offset
+              tempStyle.boxShadow = x +"px "+y+"px "+radius+"px "+ RenderedColor(color);
+            break;
+          }
+        }
+      })
+    }
+  }
+  const setRotate =()=>tempStyle.transform = "rotate("+Math.round(rotations[id].rotation)+"deg)"
+  //@TODO rotate shadow as well :)
 
   const setPosition =()=>{
     const { x,y,width,height } = absoluteBoundingBox
@@ -66,7 +89,11 @@ const Element = ({node,parent}) =>{
     let top = y - currentFrame.absoluteBoundingBox.y
     let left = x - currentFrame.absoluteBoundingBox.x
     switch (constraints.horizontal) {
-      case "LEFT":case "CENTER":tempStyle.left = x - currentFrame.absoluteBoundingBox.x;break;
+      case "SCALE":
+        tempStyle.left = left
+        tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
+      ;break;
+      case "LEFT":case "CENTER":tempStyle.left = left ;break;
       case "RIGHT":tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
       case "LEFT_RIGHT":
         tempStyle.left = left
@@ -74,7 +101,11 @@ const Element = ({node,parent}) =>{
       ;break;
     }
     switch (constraints.vertical) {
-      case "TOP":case "CENTER":tempStyle.top = y - currentFrame.absoluteBoundingBox.y;break;
+      case "SCALE":
+        tempStyle.top = top
+        tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
+        ;break;
+      case "TOP":case "CENTER":tempStyle.top = top;break;
       case "BOTTOM":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
       case "TOP_BOTTOM":
         tempStyle.top = top
@@ -84,7 +115,7 @@ const Element = ({node,parent}) =>{
     if(nodeTree.hasOwnProperty(parent)){
       const parentPos = nodeTree[parent].absoluteBoundingBox
       switch (constraints.horizontal) {
-        case "LEFT":case "CENTER":tempStyle.left = tempStyle.left - parentPos.x;break;
+        case "LEFT":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
         case "RIGHT":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
         case "LEFT_RIGHT":
           tempStyle.left = tempStyle.left - parentPos.x
@@ -92,7 +123,7 @@ const Element = ({node,parent}) =>{
         ;break;
       }
       switch (constraints.vertical) {
-        case "TOP":case "CENTER":tempStyle.top = tempStyle.top - parentPos.y;break;
+        case "TOP":case "CENTER":case "SCALE":tempStyle.top = tempStyle.top - (parentPos.y - currentFrame.absoluteBoundingBox.y);break;
         case "BOTTOM":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
         case "TOP_BOTTOM":
           tempStyle.top = tempStyle.top - parentPos.y
@@ -108,7 +139,7 @@ const Element = ({node,parent}) =>{
         id,attribute:"visible",value:visible
       }
       dispatch({type:'SET_ATTRIBUTE',payload:setKey})
-      tempStyle.visibility = visible?"visible":"hidden"
+      if(!visible)tempStyle.display = "none"
     }
   }
 
@@ -116,6 +147,12 @@ const Element = ({node,parent}) =>{
     const itemSpacing = nodeTree[parent].itemSpacing
     const firstChild = nodeTree[parent].children[0].id === id
     if(!firstChild)tempStyle[nodeTree[parent].layoutMode==="VERTICAL"?"marginTop":"marginLeft"] = itemSpacing
+    const flexDirectionIsHorizontal = nodeTree[parent].layoutMode==="HORIZONTAL"
+      if(flexChild&&node.layoutAlign==='STRETCH')tempStyle[flexDirectionIsHorizontal?'height':'width'] = "100%"
+      if (flexChild) {
+        if(node.layoutGrow===1)tempStyle.flex = 1
+        else tempStyle[flexDirectionIsHorizontal?'width':'height'] = absoluteBoundingBox[flexDirectionIsHorizontal?'width':'height']
+      }
   }
 
   const setRadius=()=>{
@@ -129,6 +166,48 @@ const Element = ({node,parent}) =>{
     }
   }
 
+  const centerStyle = isParent =>{
+    if(nodeStyle){
+      const centerParent = {...nodeStyle}
+      const childStyle = {...nodeStyle}
+      delete centerParent.width
+      delete centerParent.height
+      delete childStyle.height
+      delete centerParent.left
+      delete centerParent.right
+
+      const x = node.absoluteBoundingBox.x - currentFrame.absoluteBoundingBox.x
+      const isLeft = x <= (currentFrame.absoluteBoundingBox.width - childStyle.width) / 2
+
+      let calcChildWidth
+      if(isLeft){
+        calcChildWidth = currentFrame.absoluteBoundingBox.width - (x*2)
+      } else {
+        const xRight = (currentFrame.absoluteBoundingBox.width - (childStyle.width + childStyle.left))
+        calcChildWidth = currentFrame.absoluteBoundingBox.width - (xRight*2)
+        childStyle.display = "flex"
+        childStyle.justifyContent = "flex-end"
+      }
+
+      delete childStyle.position
+      delete childStyle.left
+      delete childStyle.top
+      delete childStyle.bottom
+      childStyle.width = calcChildWidth
+      if(!centerParent.width)delete centerParent.width
+      if(!childStyle.width)delete childStyle.width
+
+      return isParent==='parent'?centerParent:childStyle
+    } else return {background:'red'}
+  }
+  const handleClick = ()=>{
+    const nextPage = currentPage.children
+    .filter(frame=>frame.id === transitionNodeID)[0]
+    const nextPageIdx = currentPage.children.indexOf(nextPage)
+    dispatch({type:'SET_CURRENT_FRAME_IDX',payload:nextPageIdx})
+  }
+
+
   useEffect(()=>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
   },[figmaData,nodeTree])
@@ -139,7 +218,10 @@ const Element = ({node,parent}) =>{
       if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
       if(flexParent)setFlex()
+      if(opacity)setOpacity()
       setDimension()
+      //if(rotations&&!rotations.hasOwnProperty('noRotations'))setRotate()
+      setEffects()
       if(!flexChild)setPosition()
       else setChild()
       setVisibility()
@@ -150,14 +232,14 @@ const Element = ({node,parent}) =>{
   let renderThis
   switch (type) {
     case "VECTOR":
-      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector style={nodeStyle} node={node}/>
+      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>
       else return null;break;
-    case "TEXT":renderThis = <Text style={nodeStyle} node={node}/>;break;
-    case "ELLIPSE":renderThis = <Ellipse style={nodeStyle} node={node}/>;break;
+    case "TEXT":renderThis = <Text onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>;break;
+    case "ELLIPSE":renderThis = <Ellipse onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>;break;
     default: renderThis = (
-      <article style={nodeStyle} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''}`}>
-        {(type!=="TEXT"&&type!=="VECTOR")&&<Background element={node}/>}
-        {(type!=="TEXT"&&type!=="VECTOR")&&<Stroke element={node}/>}
+      <article style={nodeStyle} onClick={transitionNodeID?handleClick:null} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${transitionNodeID?'clickable':null}`}>
+        {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
+        {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
         {node.children&&node.children.map(child=>{
           return (
             <Element
@@ -171,33 +253,16 @@ const Element = ({node,parent}) =>{
 
   }
   if(node.constraints.horizontal === "CENTER") {
-    const centerParent = {...nodeStyle}
-    const childStyle = {...nodeStyle}
-    delete centerParent.width
-    delete centerParent.left
-    delete centerParent.right
-
-    const isLeft = childStyle.hasOwnProperty('left')
-    const calcChildWidth = isLeft?childStyle.left*2:childStyle.right*2
-    delete childStyle.position
-    delete childStyle.left
-    delete childStyle.top
-    delete childStyle.right
-    delete childStyle.bottom
-    childStyle.width = currentFrame.absoluteBoundingBox.width-calcChildWidth
-    if(!centerParent.width)delete centerParent.width
-    if(!childStyle.width)delete childStyle.width
     return (
       <main
-        style={centerParent}
+        style={centerStyle("parent")}
         className="centerParent">
         <section
-          className={`childStyle ${isLeft?'isLeft':'isRight'}`}
-          style={childStyle}>{renderThis}</section>
+          className="childStyle"
+          style={centerStyle("child")}>{renderThis}</section>
       </main>
     )
-  }
-  else return renderThis
+  } else return renderThis
 
 
 

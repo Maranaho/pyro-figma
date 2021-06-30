@@ -7,7 +7,7 @@ import './Vector.css'
 
 const Vector = ({node,style}) =>{
 const { vectors } = useContext(PyroStateContext)
-const { name,id,strokeWeight } = node
+const { transitionNodeID,name,id,strokeWeight } = node
 const {vectorPaths,width,height} = vectors[id]
 const [vectorStyle,setVectorStyle] = useState({...style})
 const [SVGStyle,setSVGStyle] = useState(null)
@@ -31,7 +31,7 @@ const setVector = ()=>{
 }
 useEffect(setVector,[])
   return (
-    <article className="Vector" style={vectorStyle}>
+    <article className={`Vector ${transitionNodeID?'clickable':null}`} style={vectorStyle}>
       <Background element={node}/>
       <svg
         style={SVGStyle}

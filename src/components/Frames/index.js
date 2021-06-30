@@ -10,10 +10,11 @@ import './../../resize.css'
 const Frames = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
+  const { currentBreakpoint,breakPoints,nodeTree,figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
   const currentPage = figmaData.document.children[currentPageIDX]
   const handleResize = (e,{size}) =>{
     const { width,height } = size
+    dispatch({type:'SET_DIRECTION',payload:0>=protoWidth-width})
     dispatch({type:'SET_WIDTH',payload:width})
     dispatch({type:'SET_HEIGHT',payload:height})
   }
@@ -27,6 +28,28 @@ const Frames = ()=>{
     })
   }
 
+  const checkRWD = ()=>{
+    const pages = figmaData.document.children[currentPageIDX]
+    if(pages.hasOwnProperty('children')){
+      pages.children.forEach((frame,idx) => {
+        if (frame.name.indexOf('|')!==-1) {
+          frame[frame.name.split('|')[0].split(' ').join('**').toLowerCase()] = frame.absoluteBoundingBox.width
+          frame.index = idx
+        }
+      })
+    }
+  }
+
+
+    useEffect(()=>{
+      if(breakPoints&&breakPoints.length){
+        const currentIdx = breakPoints[currentBreakpoint].index
+        if(currentFrameIDX!==currentIdx)dispatch({type:'SET_CURRENT_FRAME_IDX',payload:currentIdx})
+      }
+    },[currentBreakpoint,breakPoints])
+
+
+  useEffect(checkRWD,[figmaData])
   useEffect(protoStart,[figmaData])
   if(!figmaData.document.children[currentPageIDX].children.length)return <Empty/>
   return (

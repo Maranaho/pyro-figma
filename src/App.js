@@ -72,7 +72,12 @@ const App = ()=>{
       if(selection&&selection.length)dispatch({type:'SET_SELECTION',payload:selection[0]})
     }
     const getVector =()=>{
-      if(vectorDB&&vectorDB.length)dispatch({type:'SET_VECTORS',payload:vectorDB[1]})
+      if(vectorDB&&vectorDB.length){
+        const rotatesDB = vectorDB[0]
+        delete rotatesDB.id
+        dispatch({type:'SET_ROTATES',payload:rotatesDB})
+        dispatch({type:'SET_VECTORS',payload:vectorDB[2]})
+      }
     }
 
     useEffect(()=>{

@@ -4,7 +4,7 @@ import Background from '../Background'
 import './Text.css'
 
 const Text = ({node,style:posStyle}) =>{
-const { name,characters,style:fontStyle } = node
+const { transitionNodeID,name,characters,style:fontStyle } = node
 const [ textStyles,setTextStyles ] = useState(null)
 const txtStyles = {...fontStyle}
 const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
@@ -26,11 +26,17 @@ const getStyles = ()=>{
     txtStyles.display = "flex"
     let justif,align
     switch (txtStyles.textAlignHorizontal) {
-      case "CENTER":justif = "center";break;
+      case "CENTER":
+        justif = "center"
+        txtStyles.margin = "auto";
+      break;
       case "RIGHT":justif = "flex-end";break;
     }
     switch (txtStyles.textAlignVertical) {
-      case "CENTER":align = "center";break;
+      case "CENTER":
+        align = "center";
+        txtStyles.margin = "auto";
+      break;
       case "BOTTOM":align = "flex-end";break;
     }
     txtStyles.justifyContent = justif
@@ -43,7 +49,7 @@ const getStyles = ()=>{
 useEffect(getStyles,[])
 
   return (
-    <p style={{...posStyle,...textStyles}} className={`Text ${node.name.split(' ').join('_')}`}>
+    <p style={{...posStyle,...textStyles}} className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
       {characters}
     </p>
   )

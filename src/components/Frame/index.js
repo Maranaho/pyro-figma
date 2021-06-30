@@ -9,7 +9,7 @@ const Frame = ()=>{
   const { figmaData,currentPageIDX,currentFrameIDX,protoHeight } = useContext(PyroStateContext)
   const currentPage = figmaData.document.children[currentPageIDX]
   const parentStyle = {
-    overflowY: protoHeight < currentPage.children[currentFrameIDX].absoluteBoundingBox.height ? "scroll":null
+    //overflowY: protoHeight < currentPage.children[currentFrameIDX].absoluteBoundingBox.height ? "scroll":null
   }
   return (
     <section style={parentStyle} className="Frame">

@@ -8,7 +8,7 @@ import Loading from '../Loading'
 
 const Prototype = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,figmaFile,loading,currentPageIDX,currentPageID,selection,nodeTree } = useContext(PyroStateContext)
+  const { direction,currentBreakpoint,breakPoints,rwd,currentFrameIDX,protoWidth,figmaData,figmaFile,loading,currentPageIDX,currentPageID,selection,nodeTree } = useContext(PyroStateContext)
   const basicGrey = "rgba(229.00000154972076,229.00000154972076,229.00000154972076,1)"
   const [ bg,setBG ] = useState(null)
 
@@ -24,7 +24,38 @@ const Prototype = ()=>{
     }
   }
 
+  const getBreakPoints = ()=>{
+    const currWidth = Math.round(protoWidth)
+    if(nodeTree){
+      const frame = figmaData.document.children[currentPageIDX].children[currentFrameIDX]
+      const key = Object.keys(frame)
+      .filter(key=>frame.name.toLowerCase().indexOf(key.split("**")[0])!== -1)
+      const setPoints = figmaData.document.children[currentPageIDX].children
+      .filter(currFrame=>currFrame.hasOwnProperty(key[0]))
+      .map(currFrame=>{
+        return {index:currFrame.index,id:currFrame.id,name:currFrame.name,breakPoint:currFrame[key[0]]}
+      }).sort((a,b)=>a.breakPoint - b.breakPoint)
+
+      dispatch({type:'SET_BREAKPOINTS',payload:setPoints})
+    }
+  }
+
+  const handleResize =()=>{
+    if (breakPoints&&breakPoints.length) {
+      const w = Math.round(protoWidth)
+      if(direction){
+        if(currentBreakpoint+1<breakPoints.length&&w>breakPoints[currentBreakpoint+1].breakPoint){
+          dispatch({type:'SET_CURRENT_BPOINT',payload:currentBreakpoint+1})
+        }
+      } else if(w<breakPoints[currentBreakpoint].breakPoint&&currentBreakpoint-1>=0){
+        dispatch({type:'SET_CURRENT_BPOINT',payload:currentBreakpoint-1})
+      }
+    }
+  }
+
   useEffect(pageIdx,[currentPageID,selection])
+  useEffect(handleResize,[protoWidth])
+  useEffect(getBreakPoints,[nodeTree])
 
   useEffect(()=>{
     if (figmaData) {

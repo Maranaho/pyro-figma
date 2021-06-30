@@ -23,7 +23,11 @@ body {
 }
 
 p{margin: 0}
-
+button{cursor: pointer}
+.clickable{
+  cursor: pointer;
+  user-select:none;
+}
 .shallowLink{
   text-decoration: underline;
   cursor: pointer;

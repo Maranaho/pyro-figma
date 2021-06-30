@@ -1,5 +1,9 @@
+.centerParent,.childStyle{margin-top: 0 !important}
 .Element{
   position: relative;
+  &.flexParent .childStyle{
+    flex: 1;
+  }
 }
 .centerParent{
   width: 100%;
@@ -9,11 +13,13 @@
   justify-content: center;
   .childStyle {
     position: relative;
-    .Element{
+    margin: 0 auto;
+    .flexChild {flex: 1}
+    .Element,p{
+      position: relative !important;
       top:inherit !important;
       bottom:inherit !important;
+      left:0 !important;
     }
-    &.isLeft .Element {left:0 !important}
-    &.isright .Element {right:0 !important}
   }
 }

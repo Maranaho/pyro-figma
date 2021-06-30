@@ -29,14 +29,14 @@ const Background = ({ element })=>{
                 bg={bg}/>
             );break;
 
-        case "IMAGE": return <ImageBG bg={bg} key={key}/>;break;
+        case "IMAGE": return <ImageBG constraints={element.constraints} bg={bg} key={key}/>;break;
 
         default: return <SolidBG bg={bg} key={key}/>
       }
     }
     return null
   }
-  
+
   if(!element.hasOwnProperty("background")&&!element.hasOwnProperty("fills"))return null
   return (
     <section className="Background">

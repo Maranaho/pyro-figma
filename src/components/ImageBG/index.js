@@ -2,10 +2,9 @@ import React,{ useContext } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import './ImageBG.css'
 
-const ImageBG = ({bg})=>{
+const ImageBG = ({bg,constraints})=>{
   const { fileImages,protoWidth,protoHeight,smoov } = useContext(PyroStateContext)
   const fill = ()=>{
-    //@TO
     if(protoWidth < protoHeight) return {height:protoHeight}
     return {height:protoWidth}
   }
@@ -25,7 +24,7 @@ const ImageBG = ({bg})=>{
   return (
     <div
       style={bg.scaleMode==='TILE'?tile():bgBlend()}
-      className={`ImageBG ${bg.scaleMode.toLowerCase()} ${protoWidth<protoHeight?'portrait':'landscape'} ${smoov?'smoov':''}`}>
+      className={`ImageBG ${bg.scaleMode.toLowerCase()} ${constraints.horizontal === "CENTER"?'maxWidth':null} ${protoWidth<protoHeight?'portrait':'landscape'} ${smoov?'smoov':''}`}>
       {bg.scaleMode!=='TILE'&&<img src={fileImages[bg.imageRef]} style={bg.scaleMode === 'FILL'?fill():null}alt="protoBg"/>}
     </div>
   )

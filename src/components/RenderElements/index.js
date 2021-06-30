@@ -12,7 +12,7 @@ const RenderElements = ()=>{
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
   const parentStyle = {
-    minHeight:currentPage.children[currentFrameIDX].absoluteBoundingBox.height
+    //minHeight:currentPage.children[currentFrameIDX].absoluteBoundingBox.height
   }
   useEffect(()=>dispatch({type:'ADD_CHILD_ELEMENT',payload:currentFrame}),[])
   return (
