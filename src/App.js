@@ -73,10 +73,10 @@ const App = ()=>{
     }
     const getVector =()=>{
       if(vectorDB&&vectorDB.length){
-        const rotatesDB = vectorDB[0]
+        const rotatesDB = vectorDB[1]
         delete rotatesDB.id
         dispatch({type:'SET_ROTATES',payload:rotatesDB})
-        dispatch({type:'SET_VECTORS',payload:vectorDB[2]})
+        dispatch({type:'SET_VECTORS',payload:vectorDB[3]})
       }
     }
 

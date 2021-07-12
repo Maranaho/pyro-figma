@@ -35,7 +35,6 @@ const Prototype = ()=>{
       .map(currFrame=>{
         return {index:currFrame.index,id:currFrame.id,name:currFrame.name,breakPoint:currFrame[key[0]]}
       }).sort((a,b)=>a.breakPoint - b.breakPoint)
-
       dispatch({type:'SET_BREAKPOINTS',payload:setPoints})
     }
   }

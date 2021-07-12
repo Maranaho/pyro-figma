@@ -49,7 +49,7 @@ const Frames = ()=>{
     },[currentBreakpoint,breakPoints])
 
 
-  useEffect(checkRWD,[figmaData])
+  useEffect(checkRWD,[figmaData,currentPageIDX])
   useEffect(protoStart,[figmaData])
   if(!figmaData.document.children[currentPageIDX].children.length)return <Empty/>
   return (
