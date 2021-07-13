@@ -11,7 +11,7 @@ import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
+  const { pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
 
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
@@ -94,7 +94,7 @@ const Element = ({node,parent}) =>{
         tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
       ;break;
       case "LEFT":case "CENTER":tempStyle.left = left ;break;
-      case "RIGHT":tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
+      case "RIGHT": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
       case "LEFT_RIGHT":
         tempStyle.left = left
         tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
@@ -112,7 +112,7 @@ const Element = ({node,parent}) =>{
         tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
       ;break;
     }
-    if(nodeTree.hasOwnProperty(parent)){
+    if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'){
       const parentPos = nodeTree[parent].absoluteBoundingBox
       switch (constraints.horizontal) {
         case "LEFT":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
@@ -200,20 +200,39 @@ const Element = ({node,parent}) =>{
       return isParent==='parent'?centerParent:childStyle
     } else return {background:'red'}
   }
+
   const handleClick = ()=>{
-    const nextPage = currentPage.children
-    .filter(frame=>frame.id === transitionNodeID)[0]
-    const nextPageIdx = currentPage.children.indexOf(nextPage)
-    dispatch({type:'SET_CURRENT_FRAME_IDX',payload:nextPageIdx})
+    if (pluginState.pluginActions.hasOwnProperty(id)) {
+      Object.keys(pluginState.pluginActions[id]).forEach(action => {
+        if(pluginState.pluginActions[id][action].eventType === 'Click'){
+          console.log(pluginState.pluginActions[id][action]);
+        }
+      })
+    }
+    if(transitionNodeID){
+      const nextPage = currentPage.children
+      .filter(frame=>frame.id === transitionNodeID)[0]
+      const nextPageIdx = currentPage.children.indexOf(nextPage)
+      dispatch({type:'SET_CURRENT_FRAME_IDX',payload:nextPageIdx})
+    }
   }
+
+  const setNodeActions = ()=>{
+    let setNode = {...node}
+    const { pluginActions,pluginConditions } = pluginState
+    if(pluginActions.hasOwnProperty(id))setNode.actions = pluginActions[id]
+    if(pluginConditions.hasOwnProperty(id))setNode.conditions = pluginConditions[id]
+    dispatch({type:'ADD_CHILD_ELEMENT',payload:setNode})
+  }
+
 
 
   useEffect(()=>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
   },[figmaData,nodeTree])
 
+  useEffect(setNodeActions,[pluginStateChanges])
   useEffect(()=>{
-    dispatch({type:'ADD_CHILD_ELEMENT',payload:node})
     if(nodeTree){
       if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
@@ -228,16 +247,15 @@ const Element = ({node,parent}) =>{
       setNodeStyle(tempStyle)
     }
   },[figmaData,nodeTree,flexChild])
-
   let renderThis
   switch (type) {
     case "VECTOR":
-      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>
+      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector handleClick={handleClick} style={nodeStyle} node={node}/>
       else return null;break;
-    case "TEXT":renderThis = <Text onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>;break;
-    case "ELLIPSE":renderThis = <Ellipse onClick={transitionNodeID?handleClick:null} style={nodeStyle} node={node}/>;break;
+    case "TEXT":renderThis = <Text handleClick={handleClick} style={nodeStyle} node={node}/>;break;
+    case "ELLIPSE":renderThis = <Ellipse handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     default: renderThis = (
-      <article style={nodeStyle} onClick={transitionNodeID?handleClick:null} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${transitionNodeID?'clickable':null}`}>
+      <article style={nodeStyle} onClick={handleClick} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${transitionNodeID?'clickable':null}`}>
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
         {node.children&&node.children.map(child=>{

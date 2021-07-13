@@ -24,10 +24,18 @@ let initialPyroState = {
   direction:false,
   email:null,
   rotations:null,
+  pluginState:null,
+  pluginStateChanges:false,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'SET_PLUGIN_STATE':
+      let SET_PLUGIN_STATE = {...state}
+      SET_PLUGIN_STATE.pluginStateChanges = !SET_PLUGIN_STATE.pluginStateChanges
+      SET_PLUGIN_STATE.pluginState = action.payload
+    return SET_PLUGIN_STATE;
 
     case 'SET_DIRECTION':
       let SET_DIRECTION = {...state}
@@ -78,8 +86,12 @@ const PyroReducer = (state, action) => {
 
     case 'ADD_CHILD_ELEMENT':
       let ADD_CHILD_ELEMENT = {...state}
-      if(!ADD_CHILD_ELEMENT.nodeTree)ADD_CHILD_ELEMENT.nodeTree = {}
-      ADD_CHILD_ELEMENT.nodeTree[action.payload.id] = action.payload
+      let startNodeTree = {}
+      if(ADD_CHILD_ELEMENT.nodeTree === null){
+        startNodeTree[action.payload.id] = action.payload
+        ADD_CHILD_ELEMENT.nodeTree = startNodeTree
+      } else ADD_CHILD_ELEMENT.nodeTree[action.payload.id] = action.payload
+
     return ADD_CHILD_ELEMENT;
 
     case 'GET_ME':

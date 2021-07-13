@@ -26,8 +26,14 @@ const App = ()=>{
   const { figmaData,figmaFile,loading,token,me } = state
   const firestore = firebase.firestore()
   const fileDB = firestore.collection('figma-files').doc(figmaFile).collection("fileData")
+  const pluginVariablesDB = fileDB.doc("pluginUIData").collection("variables")
+  const pluginActionsDB = fileDB.doc("pluginUIData").collection("nodeActions")
+  const pluginConditionsDB = fileDB.doc("pluginUIData").collection("nodeConditions")
   const selectionDB = fileDB.doc("users").collection("selections")
   const querySelect = selectionDB.where("email", "==", me?me.email:'null')
+  const [pluginVariables] = useCollectionData(pluginVariablesDB,{idField:'id'})
+  const [pluginActions] = useCollectionData(pluginActionsDB,{idField:'id'})
+  const [pluginConditions] = useCollectionData(pluginConditionsDB,{idField:'id'})
   const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
   const [selection] = useCollectionData(querySelect,{idField:'id'})
 
@@ -80,12 +86,44 @@ const App = ()=>{
       }
     }
 
+    const getPluginState = ()=>{
+      if(pluginVariables&&pluginActions&&pluginConditions){
+
+        let pluginVariablesState = pluginVariables.reduce((acc,variable)=>{
+          acc[variable.id] = Object.entries(variable.var)[0][1]
+          return acc
+        },{})
+
+        let pluginActionsState = pluginActions.reduce((acc,node)=>{
+          pluginActionsDB.doc(node.id).collection('actions').get()
+          .then(snap=>{
+            const actions = {}
+            snap.forEach(doc => actions[doc.id] = doc.data())
+            acc[node.id] = actions
+          })
+          return acc
+        },{})
+
+        let pluginConditionsState = pluginConditions.reduce((acc,node)=>{
+          pluginConditionsDB.doc(node.id).collection('conditions').get()
+          .then(snap=>{
+            const conditions = {}
+            snap.forEach(doc => conditions[doc.id] = doc.data())
+            acc[node.id] = conditions
+          })
+          return acc
+        },{})
+
+        dispatch({type:'SET_PLUGIN_STATE',payload:{pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState}})
+      }
+    }
     useEffect(()=>{
       if(figmaData&&token)GetMe(token,dispatch)
     },[figmaData,token])
     useEffect(getSelection,[selection])
     useEffect(getVector,[vectorDB])
     useEffect(retrieveToken,[])
+    useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions])
   return (
     <PyroDispatchContext.Provider value={dispatch}>
       <PyroStateContext.Provider value={state}>

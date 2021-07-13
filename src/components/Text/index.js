@@ -3,7 +3,7 @@ import RenderedColor from '../../Utils/RenderedColor'
 import Background from '../Background'
 import './Text.css'
 
-const Text = ({node,style:posStyle}) =>{
+const Text = ({handleClick,node,style:posStyle}) =>{
 const { transitionNodeID,name,characters,style:fontStyle } = node
 const [ textStyles,setTextStyles ] = useState(null)
 const txtStyles = {...fontStyle}
@@ -49,7 +49,10 @@ const getStyles = ()=>{
 useEffect(getStyles,[])
 
   return (
-    <p style={{...posStyle,...textStyles}} className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
+    <p
+      onClick={handleClick}
+      style={{...posStyle,...textStyles}}
+      className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
       {characters}
     </p>
   )

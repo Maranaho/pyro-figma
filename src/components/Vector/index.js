@@ -5,7 +5,7 @@ import Background from '../Background'
 import Stroke from '../Stroke'
 import './Vector.css'
 
-const Vector = ({node,style}) =>{
+const Vector = ({handleClick,node,style}) =>{
 const { vectors } = useContext(PyroStateContext)
 const { transitionNodeID,name,id,strokeWeight } = node
 const {vectorPaths,width,height} = vectors[id]
@@ -31,7 +31,10 @@ const setVector = ()=>{
 }
 useEffect(setVector,[])
   return (
-    <article className={`Vector ${transitionNodeID?'clickable':null}`} style={vectorStyle}>
+    <article
+      onClick={handleClick}
+      className={`Vector ${transitionNodeID?'clickable':null}`}
+      style={vectorStyle}>
       <Background element={node}/>
       <svg
         style={SVGStyle}
