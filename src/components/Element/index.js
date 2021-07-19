@@ -6,12 +6,13 @@ import Background from '../Background'
 import Stroke from '../Stroke'
 import Vector from '../Vector'
 import Text from '../Text'
+import Field from '../Field'
 import Ellipse from '../Ellipse'
 import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
+  const { updateVis,pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
 
   const currentPage = figmaData.document.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
@@ -19,6 +20,7 @@ const Element = ({node,parent}) =>{
   const [ parentNode,setParentNode ] = useState(currentFrame)
   const [ nodeStyle,setNodeStyle ] = useState(null)
   const [ flexChild,setFlexChild ] = useState(false)
+  const [ clickable,makeClickable ] = useState(false)
   const flexParent = node.hasOwnProperty("layoutMode")
   let tempStyle = {}
 
@@ -109,10 +111,11 @@ const Element = ({node,parent}) =>{
       case "BOTTOM":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
       case "TOP_BOTTOM":
         tempStyle.top = top
-        tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
+        tempStyle.bottom = currentFrame.absolutenpmingBox.height - (height + top)
       ;break;
     }
-    if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'){
+
+    if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'&&nodeTree[parent].type !== 'GROUP'){
       const parentPos = nodeTree[parent].absoluteBoundingBox
       switch (constraints.horizontal) {
         case "LEFT":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
@@ -201,14 +204,21 @@ const Element = ({node,parent}) =>{
     } else return {background:'red'}
   }
 
-  const handleClick = ()=>{
+  const handleEvent = eventType =>{
     if (pluginState.pluginActions.hasOwnProperty(id)) {
       Object.keys(pluginState.pluginActions[id]).forEach(action => {
-        if(pluginState.pluginActions[id][action].eventType === 'Click'){
-          console.log(pluginState.pluginActions[id][action]);
+        if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
+          dispatch({type:'UPDATE_PLUGIN_STATE',payload:{
+            pluginAction:pluginState.pluginActions[id][action],eventType}})
         }
       })
+      makeClickable(true)
     }
+  }
+
+
+  const handleClick = ()=>{
+    handleEvent(['Click'])
     if(transitionNodeID){
       const nextPage = currentPage.children
       .filter(frame=>frame.id === transitionNodeID)[0]
@@ -225,13 +235,33 @@ const Element = ({node,parent}) =>{
     dispatch({type:'ADD_CHILD_ELEMENT',payload:setNode})
   }
 
+  const returnVisibility = condition =>{
+    if(String(pluginState.pluginVariables[condition.condition1]) === String(condition.condition2)) return condition.show
+    else return !condition.show
+  }
+
+  const updateVisibility =()=>{
+    if (nodeTree&&nodeTree.hasOwnProperty(id)&&nodeTree[id].hasOwnProperty('conditions')) {
+      const isVisible = Object
+      .keys(nodeTree[id].conditions)
+      .every(condition=>{
+        if (returnVisibility(nodeTree[id].conditions[condition])) return true
+        else return false
+      })
+      let temp = {}
+      if(!isVisible)temp.visibility = 'hidden'
+      else temp.visibility = 'visible'
+      if(nodeStyle)setNodeStyle({...nodeStyle,...temp})
+    }
+  }
+
 
 
   useEffect(()=>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
   },[figmaData,nodeTree])
 
-  useEffect(setNodeActions,[pluginStateChanges])
+  useEffect(setNodeActions,[nodeTree,currentFrameIDX,pluginStateChanges])
   useEffect(()=>{
     if(nodeTree){
       if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
@@ -247,6 +277,8 @@ const Element = ({node,parent}) =>{
       setNodeStyle(tempStyle)
     }
   },[figmaData,nodeTree,flexChild])
+
+  useEffect(updateVisibility,[updateVis,nodeTree])
   let renderThis
   switch (type) {
     case "VECTOR":
@@ -255,9 +287,15 @@ const Element = ({node,parent}) =>{
     case "TEXT":renderThis = <Text handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     case "ELLIPSE":renderThis = <Ellipse handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     default: renderThis = (
-      <article style={nodeStyle} onClick={handleClick} className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${transitionNodeID?'clickable':null}`}>
+      <article
+        style={type!=='GROUP'?nodeStyle:null}
+        onMouseEnter={()=>handleEvent(['MouseEnter','Hover'])}
+        onMouseLeave={()=>handleEvent(['MouseLeave','Hover'])}
+        onClick={handleClick}
+        className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${clickable||transitionNodeID?'clickable':''}`}>
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
+        {(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
         {node.children&&node.children.map(child=>{
           return (
             <Element

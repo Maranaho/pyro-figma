@@ -1,13 +1,17 @@
-import React,{ useEffect,useState } from 'react'
+import React,{ useEffect,useState,useContext } from 'react'
+import PyroStateContext from '../../context/PyroStateContext'
 import RenderedColor from '../../Utils/RenderedColor'
 import Background from '../Background'
 import './Text.css'
 
 const Text = ({handleClick,node,style:posStyle}) =>{
-const { transitionNodeID,name,characters,style:fontStyle } = node
+const { id,transitionNodeID,name,characters,style:fontStyle } = node
 const [ textStyles,setTextStyles ] = useState(null)
 const txtStyles = {...fontStyle}
 const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
+
+const { pluginState } = useContext(PyroStateContext)
+const { pluginTexts,pluginVariables } = pluginState
 
 const getStyles = ()=>{
   swapKeys("textAlignHorizontal","textAlign")
@@ -53,7 +57,7 @@ useEffect(getStyles,[])
       onClick={handleClick}
       style={{...posStyle,...textStyles}}
       className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
-      {characters}
+      {pluginTexts&&pluginTexts.hasOwnProperty(id)?pluginVariables[pluginTexts[id].varID]:characters}
     </p>
   )
 }

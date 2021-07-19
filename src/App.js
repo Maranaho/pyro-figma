@@ -29,11 +29,15 @@ const App = ()=>{
   const pluginVariablesDB = fileDB.doc("pluginUIData").collection("variables")
   const pluginActionsDB = fileDB.doc("pluginUIData").collection("nodeActions")
   const pluginConditionsDB = fileDB.doc("pluginUIData").collection("nodeConditions")
+  const pluginFieldsDB = fileDB.doc("pluginUIData").collection("nodeFields")
+  const pluginTextsDB = fileDB.doc("pluginUIData").collection("nodeTexts")
   const selectionDB = fileDB.doc("users").collection("selections")
   const querySelect = selectionDB.where("email", "==", me?me.email:'null')
   const [pluginVariables] = useCollectionData(pluginVariablesDB,{idField:'id'})
   const [pluginActions] = useCollectionData(pluginActionsDB,{idField:'id'})
   const [pluginConditions] = useCollectionData(pluginConditionsDB,{idField:'id'})
+  const [pluginFields] = useCollectionData(pluginFieldsDB,{idField:'id'})
+  const [pluginTexts] = useCollectionData(pluginTextsDB,{idField:'id'})
   const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
   const [selection] = useCollectionData(querySelect,{idField:'id'})
 
@@ -87,10 +91,18 @@ const App = ()=>{
     }
 
     const getPluginState = ()=>{
-      if(pluginVariables&&pluginActions&&pluginConditions){
+      if(pluginVariables&&pluginActions&&pluginConditions&&pluginFields&&pluginTexts){
 
         let pluginVariablesState = pluginVariables.reduce((acc,variable)=>{
           acc[variable.id] = Object.entries(variable.var)[0][1]
+          return acc
+        },{})
+        let pluginFieldsState = pluginFields.reduce((acc,node)=>{
+          acc[node.id] = node
+          return acc
+        },{})
+        let pluginTextsState = pluginTexts.reduce((acc,node)=>{
+          acc[node.id] = node
           return acc
         },{})
 
@@ -114,7 +126,7 @@ const App = ()=>{
           return acc
         },{})
 
-        dispatch({type:'SET_PLUGIN_STATE',payload:{pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState}})
+        dispatch({type:'SET_PLUGIN_STATE',payload:{pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState,pluginFields:pluginFieldsState,pluginTexts:pluginTextsState}})
       }
     }
     useEffect(()=>{
@@ -123,7 +135,7 @@ const App = ()=>{
     useEffect(getSelection,[selection])
     useEffect(getVector,[vectorDB])
     useEffect(retrieveToken,[])
-    useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions])
+    useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions,pluginFields,pluginTexts])
   return (
     <PyroDispatchContext.Provider value={dispatch}>
       <PyroStateContext.Provider value={state}>

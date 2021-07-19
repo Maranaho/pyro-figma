@@ -26,10 +26,37 @@ let initialPyroState = {
   rotations:null,
   pluginState:null,
   pluginStateChanges:false,
+  hoverEnter:null,
+  updateVis:false,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'UPDATE_FIELD_VALUE':
+      let UPDATE_FIELD_VALUE = {...state}
+      UPDATE_FIELD_VALUE.pluginState.pluginVariables[action.payload.variable] = action.payload.val
+    return UPDATE_FIELD_VALUE;
+
+    case 'UPDATE_PLUGIN_STATE':
+      let UPDATE_PLUGIN_STATE = {...state}
+      const update_current = String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])
+      const update_target = action.payload.pluginAction.targetVariable.targetValue
+
+      if(action.payload.eventType.indexOf('MouseEnter') !== -1) UPDATE_PLUGIN_STATE.hoverEnter = update_current
+
+      let originalVal =  UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id]
+      if (action.payload.pluginAction.actionType === 'becomes'&&(update_current!==update_target)) {
+        UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = action.payload.pluginAction.targetVariable.targetValue
+      }
+
+      if(action.payload.eventType.indexOf('MouseLeave') !== -1){
+        UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = UPDATE_PLUGIN_STATE.hoverEnter
+        UPDATE_PLUGIN_STATE.hoverEnter = null
+      }
+
+      UPDATE_PLUGIN_STATE.updateVis = !UPDATE_PLUGIN_STATE.updateVis
+    return UPDATE_PLUGIN_STATE;
 
     case 'SET_PLUGIN_STATE':
       let SET_PLUGIN_STATE = {...state}
