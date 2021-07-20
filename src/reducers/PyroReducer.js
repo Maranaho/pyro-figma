@@ -41,9 +41,9 @@ const PyroReducer = (state, action) => {
 
     case 'UPDATE_PLUGIN_STATE':
       let UPDATE_PLUGIN_STATE = {...state}
+
       const update_current = String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])
       const update_target = action.payload.pluginAction.targetVariable.targetValue
-
       if(action.payload.eventType.indexOf('MouseEnter') !== -1) UPDATE_PLUGIN_STATE.hoverEnter = update_current
 
       let originalVal =  UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id]
@@ -51,7 +51,7 @@ const PyroReducer = (state, action) => {
         UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = action.payload.pluginAction.targetVariable.targetValue
       }
 
-      if (action.payload.pluginAction.actionType === 'toggles'&&(update_current!==update_target)) {
+      if (action.payload.pluginAction.actionType === 'toggles') {
         if(String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])==='true'||
           String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])==='false'){
             UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = !UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id]

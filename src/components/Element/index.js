@@ -63,7 +63,7 @@ const Element = ({node,parent}) =>{
     tempStyle.justifyContent = setAxis(primaryAxisAlignItems)
     tempStyle.alignItems = setAxis(counterAxisAlignItems)
     const { paddingTop,paddingRight,paddingBottom,paddingLeft } = node
-    tempStyle.padding = paddingTop+"px "+paddingRight+"px "+paddingBottom+"px "+paddingLeft+"px"
+    tempStyle.padding = paddingTop?paddingTop:0+"px "+paddingRight?paddingRight:0+"px "+paddingBottom?paddingBottom:0+"px "+paddingLeft?paddingLeft:0+"px"
     tempStyle.boxSizing = "border-box"
   }
 
@@ -236,16 +236,22 @@ const Element = ({node,parent}) =>{
   }
 
   const returnVisibility = condition =>{
-    const isC2 = String(condition.condition2)==='true'||String(condition.condition2)==='false'?String(condition.condition2):String(pluginState.pluginVariables[condition.condition2])
+    const isC2 = String(condition.condition2)==='true'||String(condition.condition2)==='false'?String(condition.condition2):String(pluginState.pluginVariables[condition.condition2]).toLowerCase()
     const nbC1 = Number(pluginState.pluginVariables[condition.condition1])
     const nbC2 = isC2 === 'mt'?0:Number(isC2)
+    const c1 = String(pluginState.pluginVariables[condition.condition1]).toLowerCase()
+    let thisString = isC2 === 'mt'?'':isC2
     switch (condition.operator) {
       case 'is':
-        if(String(pluginState.pluginVariables[condition.condition1]) === isC2) return condition.show
+        if(c1 === isC2) return condition.show
+        else return !condition.show
+      break;
+      case 'different':
+        if(c1 !== thisString) return condition.show
         else return !condition.show
       break;
       case 'contains':
-        const idxC2 = pluginState.pluginVariables[condition.condition1].indexOf(isC2)
+        const idxC2 = pluginState.pluginVariables[condition.condition1].toLowerCase().indexOf(thisString)
         if(idxC2!== -1) return condition.show
         else return !condition.show
       break;
@@ -283,8 +289,8 @@ const Element = ({node,parent}) =>{
         else return false
       })
       let temp = {}
-      if(!isVisible)temp.visibility = 'hidden'
-      else temp.visibility = 'visible'
+      if(!isVisible)temp.display = 'none'
+      else temp.display = 'block'
       if(nodeStyle)setNodeStyle({...nodeStyle,...temp})
     }
   }
