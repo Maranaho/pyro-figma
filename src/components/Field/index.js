@@ -12,7 +12,6 @@ const Field = ({handleClick,node,style}) =>{
   const { pluginFields,pluginVariables } = pluginState
   const { placeHolder,type,varID } = pluginFields[id]
 
-
   return (
     <input
       className="Field"
@@ -20,7 +19,7 @@ const Field = ({handleClick,node,style}) =>{
       onChange={e=>dispatch({type:'UPDATE_FIELD_VALUE',payload:{val:e.target.value,variable:varID}})}
       placeholder={placeHolder}
       type={type}
-      value={pluginVariables[varID]}/>
+      value={pluginVariables[varID]==='mt'?'':pluginVariables[varID]}/>
   )
 }
 

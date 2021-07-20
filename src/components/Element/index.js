@@ -236,8 +236,42 @@ const Element = ({node,parent}) =>{
   }
 
   const returnVisibility = condition =>{
-    if(String(pluginState.pluginVariables[condition.condition1]) === String(condition.condition2)) return condition.show
-    else return !condition.show
+    const isC2 = String(condition.condition2)==='true'||String(condition.condition2)==='false'?String(condition.condition2):String(pluginState.pluginVariables[condition.condition2])
+    const nbC1 = Number(pluginState.pluginVariables[condition.condition1])
+    const nbC2 = isC2 === 'mt'?0:Number(isC2)
+    switch (condition.operator) {
+      case 'is':
+        if(String(pluginState.pluginVariables[condition.condition1]) === isC2) return condition.show
+        else return !condition.show
+      break;
+      case 'contains':
+        const idxC2 = pluginState.pluginVariables[condition.condition1].indexOf(isC2)
+        if(idxC2!== -1) return condition.show
+        else return !condition.show
+      break;
+      case 'isGreaterThan':
+        if(isNaN(nbC1)||isNaN(nbC2))return false
+        if(nbC1 > nbC2) return condition.show
+        else return !condition.show
+      break;
+      case 'isInferiorTo':
+        if(isNaN(nbC1)||isNaN(nbC2))return false
+        if(nbC1 < nbC2) return condition.show
+        else return !condition.show
+      break;
+      case 'isGreaterThanOrEqualTo':
+        if(isNaN(nbC1)||isNaN(nbC2))return false
+        if(nbC1 >= nbC2) return condition.show
+        else return !condition.show
+      break;
+      case 'isInferiorOrEqualTo':
+        if(isNaN(nbC1)||isNaN(nbC2))return false
+        if(nbC1 <= nbC2) return condition.show
+        else return !condition.show
+      break;
+      default:
+    }
+
   }
 
   const updateVisibility =()=>{
@@ -279,6 +313,7 @@ const Element = ({node,parent}) =>{
   },[figmaData,nodeTree,flexChild])
 
   useEffect(updateVisibility,[updateVis,nodeTree])
+  if(nodeStyle===null)return null
   let renderThis
   switch (type) {
     case "VECTOR":

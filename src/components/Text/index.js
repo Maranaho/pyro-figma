@@ -52,12 +52,13 @@ const getStyles = ()=>{
 }
 useEffect(getStyles,[])
 
+
   return (
     <p
       onClick={handleClick}
       style={{...posStyle,...textStyles}}
       className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
-      {pluginTexts&&pluginTexts.hasOwnProperty(id)?pluginVariables[pluginTexts[id].varID]:characters}
+      {(pluginTexts&&pluginTexts.hasOwnProperty(id)&&pluginVariables[pluginTexts[id].varID]==='mt')?'':pluginTexts&&pluginTexts.hasOwnProperty(id)?String(pluginVariables[pluginTexts[id].varID]):characters}
     </p>
   )
 }

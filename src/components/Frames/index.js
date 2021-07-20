@@ -62,7 +62,7 @@ const Frames = ()=>{
       <main
         style={{"width":protoWidth,"height":protoHeight}}
         className={`Frames box ${isMobile?'mobile':'desktop'} ${smoov?'smoov':''}`}>
-        <p className="pageName">{currentPage.name} &nbsp;>&nbsp; {currentPage.children[currentFrameIDX].name}</p>
+        <p className="pageName">{currentPage.name} &nbsp;>&nbsp; {currentFrameIDX&&currentPage.children.hasOwnProperty(currentFrameIDX)?currentPage.children[currentFrameIDX].name:'Frame name'}</p>
         <Frame/>
       </main>
     </Resizable>

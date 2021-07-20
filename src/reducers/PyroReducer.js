@@ -36,6 +36,7 @@ const PyroReducer = (state, action) => {
     case 'UPDATE_FIELD_VALUE':
       let UPDATE_FIELD_VALUE = {...state}
       UPDATE_FIELD_VALUE.pluginState.pluginVariables[action.payload.variable] = action.payload.val
+      UPDATE_FIELD_VALUE.updateVis = !UPDATE_FIELD_VALUE.updateVis
     return UPDATE_FIELD_VALUE;
 
     case 'UPDATE_PLUGIN_STATE':
@@ -49,6 +50,14 @@ const PyroReducer = (state, action) => {
       if (action.payload.pluginAction.actionType === 'becomes'&&(update_current!==update_target)) {
         UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = action.payload.pluginAction.targetVariable.targetValue
       }
+
+      if (action.payload.pluginAction.actionType === 'toggles'&&(update_current!==update_target)) {
+        if(String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])==='true'||
+          String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])==='false'){
+            UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = !UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id]
+          }
+      }
+
 
       if(action.payload.eventType.indexOf('MouseLeave') !== -1){
         UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id] = UPDATE_PLUGIN_STATE.hoverEnter
