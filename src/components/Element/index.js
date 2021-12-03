@@ -111,7 +111,7 @@ const Element = ({node,parent}) =>{
       case "BOTTOM":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
       case "TOP_BOTTOM":
         tempStyle.top = top
-        tempStyle.bottom = currentFrame.absolutenpmingBox.height - (height + top)
+        tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
       ;break;
     }
 
@@ -144,6 +144,15 @@ const Element = ({node,parent}) =>{
       dispatch({type:'SET_ATTRIBUTE',payload:setKey})
       if(!visible)tempStyle.display = "none"
     }
+    if(pluginState.pluginConditions.hasOwnProperty(id)) {
+      const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
+        const isVisible = returnVisibility(pluginState.pluginConditions[id][condition])
+        if(isVisible) return true
+        else return false
+      })
+      if(!showMe)tempStyle.display = "none"
+
+    }
   }
 
   const setChild =()=>{
@@ -159,13 +168,17 @@ const Element = ({node,parent}) =>{
   }
 
   const setRadius=()=>{
-    if(node.hasOwnProperty("rectangleCornerRadii")){
-      const radius = node.rectangleCornerRadii.reduce((acc,itm,idx)=>{
+    if(node.hasOwnProperty("rectangleCornerRadius")){
+      const radius = node.rectangleCornerRadius.reduce((acc,itm,idx)=>{
         acc = acc + itm+"px "
         return acc
       },"")
       tempStyle.borderRadius = radius
       tempStyle.overflow = "hidden"
+    }
+      if(node.hasOwnProperty("cornerRadius")){
+        tempStyle.borderRadius = node.cornerRadius
+        tempStyle.overflow = "hidden"
     }
   }
 
@@ -209,7 +222,8 @@ const Element = ({node,parent}) =>{
       Object.keys(pluginState.pluginActions[id]).forEach(action => {
         if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
           dispatch({type:'UPDATE_PLUGIN_STATE',payload:{
-            pluginAction:pluginState.pluginActions[id][action],eventType}})
+            pluginAction:pluginState.pluginActions[id][action],eventType
+          }})
         }
       })
       makeClickable(true)
@@ -242,7 +256,7 @@ const Element = ({node,parent}) =>{
     const c1 = String(pluginState.pluginVariables[condition.condition1]).toLowerCase()
     let thisString = isC2 === 'mt'?'':isC2
     switch (condition.operator) {
-      case 'is':
+      case 'isEqualTo':
         if(c1 === isC2) return condition.show
         else return !condition.show
       break;
@@ -275,7 +289,7 @@ const Element = ({node,parent}) =>{
         if(nbC1 <= nbC2) return condition.show
         else return !condition.show
       break;
-      default:
+      default: return 'nothing'
     }
 
   }
@@ -290,7 +304,7 @@ const Element = ({node,parent}) =>{
       })
       let temp = {}
       if(!isVisible)temp.display = 'none'
-      else temp.display = 'block'
+      else temp.display = flexParent?'flex':'block'
       if(nodeStyle)setNodeStyle({...nodeStyle,...temp})
     }
   }
@@ -323,7 +337,7 @@ const Element = ({node,parent}) =>{
   let renderThis
   switch (type) {
     case "VECTOR":
-      if(nodeStyle&&vectors.hasOwnProperty(id))renderThis = <Vector handleClick={handleClick} style={nodeStyle} node={node}/>
+      if(nodeStyle&&vectors&&vectors.hasOwnProperty(id))renderThis = <Vector handleClick={handleClick} style={nodeStyle} node={node}/>
       else return null;break;
     case "TEXT":renderThis = <Text handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     case "ELLIPSE":renderThis = <Ellipse handleClick={handleClick} style={nodeStyle} node={node}/>;break;

@@ -1,5 +1,6 @@
 import React,{ useContext } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
+import RenderedColor from '../../Utils/RenderedColor'
 import RenderElements from '../RenderElements'
 import Background from '../Background'
 import Stroke from '../Stroke'

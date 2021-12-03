@@ -57,7 +57,7 @@ const Prototype = ()=>{
   useEffect(getBreakPoints,[nodeTree])
 
   useEffect(()=>{
-    if (figmaData) {
+    if (figmaData&&figmaData.hasOwnProperty('document')) {
       const background = RenderedColor(figmaData.document.children[currentPageIDX].backgroundColor)
       if(background !== basicGrey)setBG({background})
       else setBG(null)
@@ -68,7 +68,7 @@ const Prototype = ()=>{
     <main className="FigmaProto">
       <ProtoActions/>
       <section style={bg} className="Prototype">
-        {figmaData&&!loading?<Frames/>:<Loading/>}
+        {figmaData&&figmaData.hasOwnProperty('document')&&!loading?<Frames/>:<Loading/>}
       </section>
     </main>
   )

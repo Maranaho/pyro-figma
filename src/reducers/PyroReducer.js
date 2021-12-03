@@ -1,5 +1,7 @@
 let initialPyroState = {
-  figmaFile:"91MpGRzYJyF8ZruHDpUC6r",
+  //figmaFile:"91MpGRzYJyF8ZruHDpUC6r",
+  //figmaFile:"cZk5K4u4XGN22bNIsEcojq",
+  figmaFile:null,
   loading:true,
   isMobile:true,
   figmaData:null,
@@ -10,8 +12,8 @@ let initialPyroState = {
   protoHeight:812,
   tabletWidth:1024,
   tabletHeight:728,
-  minWidth:375,
-  minHeight:400,
+  minWidth:324,
+  minHeight:394,
   smoov:false,
   onBoarding:0,
   fileImages:null,
@@ -32,6 +34,11 @@ let initialPyroState = {
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'SET_FILEKEY':
+      let SET_FILEKEY = {...state}
+      SET_FILEKEY.figmaFile= action.payload
+    return SET_FILEKEY;
 
     case 'UPDATE_FIELD_VALUE':
       let UPDATE_FIELD_VALUE = {...state}
@@ -64,6 +71,8 @@ const PyroReducer = (state, action) => {
         UPDATE_PLUGIN_STATE.hoverEnter = null
       }
 
+
+
       UPDATE_PLUGIN_STATE.updateVis = !UPDATE_PLUGIN_STATE.updateVis
     return UPDATE_PLUGIN_STATE;
 
@@ -91,7 +100,7 @@ const PyroReducer = (state, action) => {
     case 'SET_SELECTION':
       let SET_SELECTION = {...state}
       //console.log(SET_SELECTION.figmaData.document.children[SET_SELECTION.currentPageIDX].children[SET_SELECTION.currentFrameIDX]);
-      SET_SELECTION.currentPageID = action.payload.currentPage
+      SET_SELECTION.currentPageID = action.payload.currentPage.id
       SET_SELECTION.selection = action.payload.selection
     return SET_SELECTION;
 
@@ -178,7 +187,7 @@ const PyroReducer = (state, action) => {
 
     case 'SET_CURRENT_FRAME_IDX':
       let SET_CURRENT_FRAME_IDX = {...state}
-      SET_CURRENT_FRAME_IDX.currentFrameIDX = action.payload
+      if(action.payload!== undefined)SET_CURRENT_FRAME_IDX.currentFrameIDX = action.payload
     return SET_CURRENT_FRAME_IDX;
 
     case 'RESET_CURRENTPAGE':

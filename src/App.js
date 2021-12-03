@@ -1,15 +1,13 @@
-import { useReducer,useEffect,useState } from 'react'
+import { useContext,useEffect,useState } from 'react'
 import FireBaseInit from './Utils/FireBaseInit'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import PyroStateContext from './context/PyroStateContext'
 import PyroDispatchContext from './context/PyroDispatchContext'
-import PyroReducer, { initialPyroState } from './reducers/PyroReducer'
 import GetFileFromToken from './Utils/GetFileFromToken'
 import GetMe from './Utils/GetMe'
 import Prototype from './components/Prototype'
-import Landing from './components/Landing'
 import './bolt_fonts.css'
 import './assets/iconfont/harmonyicons.css'
 import './App.css'
@@ -22,8 +20,8 @@ const URL_CB = process.env.REACT_APP_URL_CB
 const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
 
 const App = ()=>{
-  const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
-  const { figmaData,figmaFile,loading,token,me } = state
+  const dispatch = useContext(PyroDispatchContext)
+  const { figmaData,figmaFile,loading,token,me } = useContext(PyroStateContext)
   const firestore = firebase.firestore()
   const fileDB = firestore.collection('figma-files').doc(figmaFile).collection("fileData")
   const pluginVariablesDB = fileDB.doc("pluginUIData").collection("variables")
@@ -86,7 +84,7 @@ const App = ()=>{
         const rotatesDB = vectorDB[1]
         delete rotatesDB.id
         dispatch({type:'SET_ROTATES',payload:rotatesDB})
-        dispatch({type:'SET_VECTORS',payload:vectorDB[3]})
+        dispatch({type:'SET_VECTORS',payload:vectorDB[2]})
       }
     }
 
@@ -136,13 +134,7 @@ const App = ()=>{
     useEffect(getVector,[vectorDB])
     useEffect(retrieveToken,[])
     useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions,pluginFields,pluginTexts])
-  return (
-    <PyroDispatchContext.Provider value={dispatch}>
-      <PyroStateContext.Provider value={state}>
-        <Prototype/>
-      </PyroStateContext.Provider>
-    </PyroDispatchContext.Provider>
-  )
+  return <Prototype/>
 }
 
 export default App

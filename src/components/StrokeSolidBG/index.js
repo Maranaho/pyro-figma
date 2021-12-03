@@ -5,11 +5,13 @@ import './StrokeSolidBG.css'
 const StrokeSolidBG = ({element,str,strokeWeight})=>{
 
   const radius = ()=>{
-    if(element.hasOwnProperty("rectangleCornerRadii")){
-      return element.rectangleCornerRadii.reduce((acc,itm,idx)=>{
+    if(element.hasOwnProperty("rectangleCornerRadius")){
+      return element.rectangleCornerRadius.reduce((acc,itm,idx)=>{
         acc = acc + itm+"px "
         return acc
       },"")
+    } else if(element.hasOwnProperty('cornerRadius')){
+      return element.cornerRadius + 'px'
     } else return null
   }
 

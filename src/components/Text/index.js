@@ -50,14 +50,19 @@ const getStyles = ()=>{
   txtStyles.color = RenderedColor(node.fills[0].color)
   setTextStyles(txtStyles)
 }
+const sumStyles = ()=>{
+  const temp = {...posStyle,...textStyles}
+  delete temp.height
+  return temp
+}
 useEffect(getStyles,[])
 
 
   return (
     <p
       onClick={handleClick}
-      style={{...posStyle,...textStyles}}
-      className={`Text ${node.name.split(' ').join('_')} ${transitionNodeID?'clickable':null}`}>
+      style={sumStyles()}
+      className={`Text ${node.name.split(' ')[0]} ${transitionNodeID?'clickable':null}`}>
       {(pluginTexts&&pluginTexts.hasOwnProperty(id)&&pluginVariables[pluginTexts[id].varID]==='mt')?'':pluginTexts&&pluginTexts.hasOwnProperty(id)?String(pluginVariables[pluginTexts[id].varID]):characters}
     </p>
   )

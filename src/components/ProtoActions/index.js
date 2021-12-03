@@ -22,8 +22,8 @@ const ProtoActions = ()=>{
       <section>
         <img src={pyro} height="27" alt="pyro"/>
       </section>
-      {figmaData?
-        <section className="fileInfo" onClick={()=>setPagesOpen(!pagesOpen)}>
+      {(figmaData&&currentPageIDX&&figmaData.document.children.hasOwnProperty(currentPageIDX))?
+        (<section className="fileInfo" onClick={()=>setPagesOpen(!pagesOpen)}>
           <h1>{figmaData.name} - {figmaData.document.children[currentPageIDX].name}</h1>
           <i className="hi hi-sm-chevron-down"/>
           <ul
@@ -32,7 +32,7 @@ const ProtoActions = ()=>{
             className={`pagesMenu ${pagesOpen?'open':''}`}>
             {figmaData.document.children.map((frame,idx)=><li idx={idx} key={frame.id}>{frame.name}</li>)}
           </ul>
-        </section>:
+        </section>):
         <h1 className="faded">Proto name - Page name</h1>
         }
       <section className="actions">
