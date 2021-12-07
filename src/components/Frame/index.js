@@ -7,15 +7,16 @@ import Stroke from '../Stroke'
 import './Frame.css'
 
 const Frame = ()=>{
-  const { figmaData,currentPageIDX,currentFrameIDX,protoHeight } = useContext(PyroStateContext)
-  const currentPage = figmaData.document.children[currentPageIDX]
+  const { figmaData,currentPageIDX,currentFrameID,protoHeight } = useContext(PyroStateContext)
+  const currentPage = figmaData.children[currentPageIDX]
   const parentStyle = {
-    //overflowY: protoHeight < currentPage.children[currentFrameIDX].absoluteBoundingBox.height ? "scroll":null
+    //overflowY: protoHeight < currentPage.children[currentFrameID].absoluteBoundingBox.height ? "scroll":null
   }
+
   return (
     <section style={parentStyle} className="Frame">
-      {(currentPage.children.hasOwnProperty(currentFrameIDX)&&currentPage.children[currentFrameIDX].hasOwnProperty('background')&&currentPage.children[currentFrameIDX].background.length>0)&&<Background element={currentPage.children[currentFrameIDX]}/>}
-      {(currentPage.children.hasOwnProperty(currentFrameIDX)&&currentPage.children[currentFrameIDX].hasOwnProperty('strokes')&&currentPage.children[currentFrameIDX].strokes.length>0)&&<Stroke element={currentPage.children[currentFrameIDX]}/>}
+      {(currentPage.children.hasOwnProperty(currentFrameID)&&currentPage.children[currentFrameID].hasOwnProperty('background')&&currentPage.children[currentFrameID].background.length>0)&&<Background element={currentPage.children[currentFrameID]}/>}
+      {(currentPage.children.hasOwnProperty(currentFrameID)&&currentPage.children[currentFrameID].hasOwnProperty('strokes')&&currentPage.children[currentFrameID].strokes.length>0)&&<Stroke element={currentPage.children[currentFrameID]}/>}
       <RenderElements/>
     </section>
   )

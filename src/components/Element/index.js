@@ -12,10 +12,10 @@ import './Element.css'
 
 const Element = ({node,parent}) =>{
   const dispatch = useContext(PyroDispatchContext)
-  const { updateVis,pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameIDX,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
+  const { updateVis,pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameID,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
 
-  const currentPage = figmaData.document.children[currentPageIDX]
-  const currentFrame = currentPage.children[currentFrameIDX]
+  const currentPage = figmaData.children[currentPageIDX]
+  const currentFrame = currentPage.children[currentFrameID]
   const { transitionNodeID,opacity,effects,visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
   const [ parentNode,setParentNode ] = useState(currentFrame)
   const [ nodeStyle,setNodeStyle ] = useState(null)
@@ -27,12 +27,12 @@ const Element = ({node,parent}) =>{
   const setDimension =()=>{
     const { width,height } = absoluteBoundingBox
     switch (constraints.horizontal) {
-      case "CENTER":case "LEFT":case "RIGHT":
+      case "CENTER":case "MIN":case "MAX":
         if(node.layoutAlign!=='STRETCH')tempStyle.width = width;
       break;
     }
     switch (constraints.vertical) {
-      case "CENTER":case "TOP":case "BOTTOM":
+      case "CENTER":case "MIN":case "MAX":
         if(node.layoutGrow!== 1)tempStyle.height = height
         else tempStyle.height = "100%";
       break;
@@ -95,9 +95,9 @@ const Element = ({node,parent}) =>{
         tempStyle.left = left
         tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
       ;break;
-      case "LEFT":case "CENTER":tempStyle.left = left ;break;
-      case "RIGHT": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
-      case "LEFT_RIGHT":
+      case "MIN":case "CENTER":tempStyle.left = left ;break;
+      case "MAX": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
+      case "STRETCH":
         tempStyle.left = left
         tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
       ;break;
@@ -107,9 +107,9 @@ const Element = ({node,parent}) =>{
         tempStyle.top = top
         tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
         ;break;
-      case "TOP":case "CENTER":tempStyle.top = top;break;
-      case "BOTTOM":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
-      case "TOP_BOTTOM":
+      case "MIN":case "CENTER":tempStyle.top = top;break;
+      case "MAX":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
+      case "STRETCH":
         tempStyle.top = top
         tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
       ;break;
@@ -118,17 +118,17 @@ const Element = ({node,parent}) =>{
     if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'&&nodeTree[parent].type !== 'GROUP'){
       const parentPos = nodeTree[parent].absoluteBoundingBox
       switch (constraints.horizontal) {
-        case "LEFT":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
-        case "RIGHT":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
-        case "LEFT_RIGHT":
+        case "MIN":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
+        case "MAX":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
+        case "STRETCH":
           tempStyle.left = tempStyle.left - parentPos.x
           tempStyle.right = tempStyle.right - parentPos.width - (width + left)
         ;break;
       }
       switch (constraints.vertical) {
-        case "TOP":case "CENTER":case "SCALE":tempStyle.top = tempStyle.top - (parentPos.y - currentFrame.absoluteBoundingBox.y);break;
-        case "BOTTOM":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
-        case "TOP_BOTTOM":
+        case "MIN":case "CENTER":case "SCALE":tempStyle.top = tempStyle.top - (parentPos.y - currentFrame.absoluteBoundingBox.y);break;
+        case "MAX":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
+        case "STRETCH":
           tempStyle.top = tempStyle.top - parentPos.y
           tempStyle.bottom = tempStyle.bottom - parentPos.width - (width + left)
         ;break;
@@ -315,7 +315,7 @@ const Element = ({node,parent}) =>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
   },[figmaData,nodeTree])
 
-  useEffect(setNodeActions,[nodeTree,currentFrameIDX,pluginStateChanges])
+  useEffect(setNodeActions,[nodeTree,currentFrameID,pluginStateChanges])
   useEffect(()=>{
     if(nodeTree){
       if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))

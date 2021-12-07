@@ -10,8 +10,8 @@ import './../../resize.css'
 const Frames = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
-  const { currentBreakpoint,breakPoints,nodeTree,figmaData,currentPageIDX,currentFrameIDX,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
-  const currentPage = figmaData.document.children[currentPageIDX]
+  const { currentBreakpoint,breakPoints,nodeTree,figmaData,currentPageIDX,currentFrameID,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
+  const currentPage = figmaData.children[currentPageIDX]
   const handleResize = (e,{size}) =>{
     const { width,height } = size
     dispatch({type:'SET_DIRECTION',payload:0>=protoWidth-width})
@@ -19,19 +19,12 @@ const Frames = ()=>{
     dispatch({type:'SET_HEIGHT',payload:height})
   }
 
-  const protoStart =()=>{
-    currentPage.children.every((frame,idx)=>{
-      if(frame.id === currentPage.prototypeStartNodeID){
-        dispatch({type:'SET_CURRENT_FRAME_IDX',payload:idx})
-        return false
-      } else return true
-    })
-  }
 
   const checkRWD = ()=>{
-    const pages = figmaData.document.children[currentPageIDX]
+    const pages = figmaData.children[currentPageIDX]
     if(pages.hasOwnProperty('children')){
-      pages.children.forEach((frame,idx) => {
+      Object.keys(pages.children).forEach((key,idx) => {
+        const frame = pages.children[key]
         if (frame.name.indexOf('|')!==-1) {
           frame[frame.name.split('|')[0].split(' ').join('**').toLowerCase()] = frame.absoluteBoundingBox.width
           frame.index = idx
@@ -40,18 +33,15 @@ const Frames = ()=>{
     }
   }
 
-
     useEffect(()=>{
       if(breakPoints&&breakPoints.length){
-        const currentIdx = breakPoints[currentBreakpoint].index
-        if(currentFrameIDX!==currentIdx)dispatch({type:'SET_CURRENT_FRAME_IDX',payload:currentIdx})
+        const currentId = breakPoints[currentBreakpoint].index
+        if(currentFrameID!==currentId)dispatch({type:'SET_CURRENT_FRAME_IDX',payload:currentId})
       }
     },[currentBreakpoint,breakPoints])
 
-
   useEffect(checkRWD,[figmaData,currentPageIDX])
-  useEffect(protoStart,[figmaData])
-  if(!figmaData.document.children[currentPageIDX].children.length)return <Empty/>
+  if(!figmaData.children[currentPageIDX].hasOwnProperty('children'))return <Empty/>
   return (
     <Resizable
       maxConstraints={[window.innerWidth, window.innerHeight - 34]}
@@ -62,7 +52,7 @@ const Frames = ()=>{
       <main
         style={{"width":protoWidth,"height":protoHeight}}
         className={`Frames box ${isMobile?'mobile':'desktop'} ${smoov?'smoov':''}`}>
-        <p className="pageName">{currentPage.name} &nbsp;>&nbsp; {currentPage.children[currentFrameIDX].name}</p>
+        <p className="pageName">{currentPage.name} &nbsp;>&nbsp; {currentFrameID&&currentPage.children[currentFrameID].name}</p>
         <Frame/>
       </main>
     </Resizable>

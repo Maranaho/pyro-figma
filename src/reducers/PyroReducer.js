@@ -2,10 +2,12 @@ let initialPyroState = {
   //figmaFile:"91MpGRzYJyF8ZruHDpUC6r",
   //figmaFile:"cZk5K4u4XGN22bNIsEcojq",
   figmaFile:null,
+  authData:null,
   loading:true,
   isMobile:true,
   figmaData:null,
   currentFrameIDX:0,
+  currentFrameID:null,
   currentPageIDX:0,
   currentPageID:null,
   protoWidth:375,
@@ -99,7 +101,7 @@ const PyroReducer = (state, action) => {
 
     case 'SET_SELECTION':
       let SET_SELECTION = {...state}
-      //console.log(SET_SELECTION.figmaData.document.children[SET_SELECTION.currentPageIDX].children[SET_SELECTION.currentFrameIDX]);
+      //console.log(SET_SELECTION.figmaData.children[SET_SELECTION.currentPageIDX].children[SET_SELECTION.currentFrameIDX]);
       SET_SELECTION.currentPageID = action.payload.currentPage.id
       SET_SELECTION.selection = action.payload.selection
     return SET_SELECTION;
@@ -185,6 +187,11 @@ const PyroReducer = (state, action) => {
       SET_HEIGHT.protoHeight = action.payload
     return SET_HEIGHT;
 
+    case 'SET_CURRENT_FRAME_ID':
+      let SET_CURRENT_FRAME_ID = {...state}
+      SET_CURRENT_FRAME_ID.currentFrameID = action.payload
+    return SET_CURRENT_FRAME_ID;
+
     case 'SET_CURRENT_FRAME_IDX':
       let SET_CURRENT_FRAME_IDX = {...state}
       if(action.payload!== undefined)SET_CURRENT_FRAME_IDX.currentFrameIDX = action.payload
@@ -218,7 +225,8 @@ const PyroReducer = (state, action) => {
 
     case 'UPDATE_FILE_DATA_FROM_FIGMA':
       let UPDATE_FILE_DATA_FROM_FIGMA = {...state}
-      UPDATE_FILE_DATA_FROM_FIGMA.figmaData = action.payload
+      UPDATE_FILE_DATA_FROM_FIGMA.authData = action.payload.authData
+      UPDATE_FILE_DATA_FROM_FIGMA.figmaData = action.payload.pageData
       UPDATE_FILE_DATA_FROM_FIGMA.loading = false
       UPDATE_FILE_DATA_FROM_FIGMA.nodeTree = null
     return UPDATE_FILE_DATA_FROM_FIGMA;

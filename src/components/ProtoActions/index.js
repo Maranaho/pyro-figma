@@ -1,7 +1,6 @@
 import React,{ useContext,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
-import GetFileFromToken from '../../Utils/GetFileFromToken'
 import InputDimensions from '../InputDimensions'
 import User from '../User'
 import Dimensions from '../Dimensions'
@@ -10,7 +9,7 @@ import './ProtoActions.css'
 
 const ProtoActions = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { loading,figmaData,token,currentPageIDX,figmaFile,me } = useContext(PyroStateContext)
+  const { loading,figmaData,token,currentPageIDX,figmaFile,me,currentFrameID } = useContext(PyroStateContext)
   const [ pagesOpen,setPagesOpen ] = useState(false)
   const handlePageMenuClick = e =>{
     dispatch({type:'SET_CURRENT_PAGE_IDX',payload:Number(e.target.getAttribute('idx'))})
@@ -22,16 +21,9 @@ const ProtoActions = ()=>{
       <section>
         <img src={pyro} height="27" alt="pyro"/>
       </section>
-      {(figmaData&&currentPageIDX&&figmaData.document.children.hasOwnProperty(currentPageIDX))?
-        (<section className="fileInfo" onClick={()=>setPagesOpen(!pagesOpen)}>
-          <h1>{figmaData.name} - {figmaData.document.children[currentPageIDX].name}</h1>
-          <i className="hi hi-sm-chevron-down"/>
-          <ul
-            onMouseLeave={()=>setPagesOpen(false)}
-            onClick={handlePageMenuClick}
-            className={`pagesMenu ${pagesOpen?'open':''}`}>
-            {figmaData.document.children.map((frame,idx)=><li idx={idx} key={frame.id}>{frame.name}</li>)}
-          </ul>
+      {figmaData&&currentFrameID?
+        (<section className="fileInfo">
+          <h1>{figmaData.name} - {figmaData.children[currentPageIDX].name}</h1>
         </section>):
         <h1 className="faded">Proto name - Page name</h1>
         }
@@ -40,7 +32,6 @@ const ProtoActions = ()=>{
         <Dimensions/>
         <InputDimensions/>
         {me&&<User/>}
-        <button disabled={loading} onClick={()=>GetFileFromToken(token,dispatch,figmaFile)}><i className="hi hi-refresh"/></button>
     </section>
   </nav>
   )

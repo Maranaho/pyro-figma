@@ -8,20 +8,24 @@ import './RenderElements.css'
 const RenderElements = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,currentPageIDX,currentFrameIDX,nodeTree,currentPageID } = useContext(PyroStateContext)
-  const currentPage = figmaData.document.children[currentPageIDX]
-  const currentFrame = currentPage.children[currentFrameIDX]
+  const { figmaData,currentPageIDX,currentFrameID,nodeTree,currentPageID } = useContext(PyroStateContext)
+  const currentPage = figmaData.children[currentPageIDX]
+  const currentFrame = currentPage.children[currentFrameID]
   const parentStyle = {
-    //minHeight:currentPage.children[currentFrameIDX].absoluteBoundingBox.height
+    //minHeight:currentPage.children[currentFrameID].absoluteBoundingBox.height
   }
-  useEffect(()=>dispatch({type:'ADD_CHILD_ELEMENT',payload:currentFrame}),[])
+
+  useEffect(()=>{
+    if(currentFrameID)dispatch({type:'ADD_CHILD_ELEMENT',payload:currentFrame})
+  },[currentFrameID])
+  if(!currentFrame)return null
   return (
     <section style={parentStyle} className="RenderElements">
-      {currentFrame.hasOwnProperty('children')?currentFrame.children.map(child=>(
+      {currentFrame.hasOwnProperty('children')?Object.keys(currentFrame.children).map(key=>(
         <Element
-          key={child.id}
+          key={currentFrame.children[key].id}
           parent={currentFrame.id}
-          node={child}/>
+          node={currentFrame.children[key]}/>
       )):<Empty/>}
     </section>
   )

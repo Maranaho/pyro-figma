@@ -6,7 +6,7 @@ import './RenderNode.css'
 
 const RenderNode = ({ node })=>{
   const { figmaData,currentFrameIDX,currentPageIDX,protoWidth,protoHeight,nodeTree } = useContext(PyroStateContext)
-  const currentFrame = figmaData.document.children[currentPageIDX].children[currentFrameIDX]
+  const currentFrame = figmaData.children[currentPageIDX].children[currentFrameIDX]
   const [ layout,setLayout ] = useState(null)
 
   const getLayout = node => {

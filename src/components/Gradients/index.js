@@ -6,11 +6,12 @@ import './Gradients.css'
 const Gradients = ({bg,gradType})=>{
   const { protoWidth,protoHeight,figmaData } = useContext(PyroStateContext)
   const canvasRef = useRef(null)
-  const { opacity,blendMode,gradientHandlePositions,gradientStops } = bg
+  const { opacity,blendMode,gradientTransform,gradientStops } = bg
 
   const makeGradients =()=>{
-    const startGradient = gradientHandlePositions[0]
-    const endGradient = gradientHandlePositions[1]
+    const startGradient = gradientTransform[0][0]
+    const endGradient = gradientTransform[1][1]
+    console.log({startGradient,endGradient});
     const c = canvasRef.current.getContext('2d')
     c.clearRect(0, 0, Math.round(protoWidth), protoHeight)
 

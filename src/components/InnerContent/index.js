@@ -8,7 +8,7 @@ const InnerContent = ()=>{
 
   const dispatch = useContext(PyroDispatchContext)
   const { figmaData,currentPageIDX,currentFrameIDX,nodeTree } = useContext(PyroStateContext)
-  const currentPage = figmaData.document.children[currentPageIDX]
+  const currentPage = figmaData.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
 
   const dispatchNodes= child =>{

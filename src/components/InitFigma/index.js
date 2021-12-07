@@ -8,7 +8,7 @@ const InitFigma = ()=>{
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
   const { figmaFile } = state
   useEffect(()=>{
-    dispatch({type:'SET_FILEKEY',payload:window.location.href.split('state=')[1]})
+    dispatch({type:'SET_FILEKEY',payload:window.location.href.split('/figma/')[1]})
   },[])
   if(!figmaFile)return <p>no file</p>
   return (
