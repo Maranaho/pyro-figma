@@ -4,6 +4,7 @@ import StrokeSolidBG from '../StrokeSolidBG'
 import './Stroke.css'
 
 const Stroke = ({ element })=>{
+  if(!element.hasOwnProperty('strokes')) return null
   const makeStroke = (str,idx) => {
     const key = element.id+idx
     if (!str.hasOwnProperty("visible")||str.visible) {

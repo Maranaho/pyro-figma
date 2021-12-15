@@ -64,7 +64,6 @@ const Prototype = ()=>{
       else setBG(null)
     }
   },[figmaData,currentPageIDX])
-
   return (
     <main className="FigmaProto">
       <ProtoActions/>

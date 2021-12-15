@@ -16,7 +16,7 @@ const Element = ({node,parent}) =>{
 
   const currentPage = figmaData.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameID]
-  const { transitionNodeID,opacity,effects,visible,constraints,type,id,name,absoluteBoundingBox,layoutMode } = node
+  const { transitionNodeID,opacity,effects,visible,constraints,type,id,name,absoluteBoundingBox,layoutMode,reactions } = node
   const [ parentNode,setParentNode ] = useState(currentFrame)
   const [ nodeStyle,setNodeStyle ] = useState(null)
   const [ flexChild,setFlexChild ] = useState(false)
@@ -26,16 +26,21 @@ const Element = ({node,parent}) =>{
 
   const setDimension =()=>{
     const { width,height } = absoluteBoundingBox
-    switch (constraints.horizontal) {
-      case "CENTER":case "MIN":case "MAX":
-        if(node.layoutAlign!=='STRETCH')tempStyle.width = width;
-      break;
-    }
-    switch (constraints.vertical) {
-      case "CENTER":case "MIN":case "MAX":
-        if(node.layoutGrow!== 1)tempStyle.height = height
-        else tempStyle.height = "100%";
-      break;
+    if(constraints){
+      switch (constraints.horizontal) {
+        case "CENTER":case "MIN":case "MAX":
+          if(node.layoutAlign!=='STRETCH')tempStyle.width = width;
+        break;
+      }
+      switch (constraints.vertical) {
+        case "CENTER":case "MIN":case "MAX":
+          if(node.layoutGrow!== 1)tempStyle.height = height
+          else tempStyle.height = "100%";
+        break;
+      }
+    } else {
+      tempStyle.width = width
+      tempStyle.height = height
     }
   }
 
@@ -90,29 +95,36 @@ const Element = ({node,parent}) =>{
     tempStyle.position = "absolute"
     let top = y - currentFrame.absoluteBoundingBox.y
     let left = x - currentFrame.absoluteBoundingBox.x
-    switch (constraints.horizontal) {
-      case "SCALE":
-        tempStyle.left = left
-        tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
-      ;break;
-      case "MIN":case "CENTER":tempStyle.left = left ;break;
-      case "MAX": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
-      case "STRETCH":
-        tempStyle.left = left
-        tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
-      ;break;
-    }
-    switch (constraints.vertical) {
-      case "SCALE":
-        tempStyle.top = top
-        tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
+    if(constraints){
+
+      switch (constraints.horizontal) {
+        case "SCALE":
+          tempStyle.left = left
+          tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
         ;break;
-      case "MIN":case "CENTER":tempStyle.top = top;break;
-      case "MAX":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
-      case "STRETCH":
-        tempStyle.top = top
-        tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
-      ;break;
+        case "MIN":case "CENTER":tempStyle.left = left ;break;
+        case "MAX": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
+        case "STRETCH":
+          tempStyle.left = left
+          tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left)
+        ;break;
+      }
+      switch (constraints.vertical) {
+        case "SCALE":
+          tempStyle.top = top
+          tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
+          ;break;
+        case "MIN":case "CENTER":tempStyle.top = top;break;
+        case "MAX":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
+        case "STRETCH":
+          tempStyle.top = top
+          tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
+        ;break;
+      }
+    }
+    else {
+      tempStyle.top = top
+      tempStyle.left = left
     }
 
     if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'&&nodeTree[parent].type !== 'GROUP'){
@@ -218,6 +230,7 @@ const Element = ({node,parent}) =>{
   }
 
   const handleEvent = eventType =>{
+    if(reactions.length)makeClickable(true)
     if (pluginState.pluginActions.hasOwnProperty(id)) {
       Object.keys(pluginState.pluginActions[id]).forEach(action => {
         if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
@@ -233,12 +246,7 @@ const Element = ({node,parent}) =>{
 
   const handleClick = ()=>{
     handleEvent(['Click'])
-    if(transitionNodeID){
-      const nextPage = currentPage.children
-      .filter(frame=>frame.id === transitionNodeID)[0]
-      const nextPageIdx = currentPage.children.indexOf(nextPage)
-      dispatch({type:'SET_CURRENT_FRAME_IDX',payload:nextPageIdx})
-    }
+    if(reactions.length) dispatch({type:'SET_CURRENT_FRAME_ID',payload:reactions[0].action.destinationId})
   }
 
   const setNodeActions = ()=>{
@@ -351,11 +359,12 @@ const Element = ({node,parent}) =>{
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
         {(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
-        {node.children&&node.children.map(child=>{
+        {node.children&&Object.keys(node.children).map(key=>{
+          const child = node.children[key]
           return (
             <Element
               parent={node.id}
-              key={child.id}
+              key={key}
               node={child}/>
           )
         })}
@@ -363,7 +372,7 @@ const Element = ({node,parent}) =>{
     )
 
   }
-  if(node.constraints.horizontal === "CENTER") {
+  if(node.hasOwnProperty('constrains')&&node.constraints.horizontal === "CENTER") {
     return (
       <main
         style={centerStyle("parent")}

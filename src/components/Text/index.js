@@ -5,17 +5,46 @@ import Background from '../Background'
 import './Text.css'
 
 const Text = ({handleClick,node,style:posStyle}) =>{
-const { id,transitionNodeID,name,characters,style:fontStyle } = node
+const {
+  id,
+  transitionNodeID,
+  name,
+  characters,
+  textAlignHorizontal,
+  textAlignVertical,
+  textAutoResize,
+  textCase,
+  textDecoration,
+  fontName,
+  fontSize,
+  layoutAlign,
+  layoutGrow,
+  letterSpacing,
+  lineHeight,
+  listSpacing
+ } = node
 const [ textStyles,setTextStyles ] = useState(null)
-const txtStyles = {...fontStyle}
-const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
+const txtStyles = {
+  textAlign:textAlignHorizontal,
+  textAlignVertical,
+  textAutoResize,
+  textTransform:textCase,
+  textDecoration,
+  fontStyle:fontName.style,
+  fontFamily:fontName.family,
+  fontSize,
+  layoutAlign,
+  layoutGrow,
+  letterSpacing,
+  lineHeight,
+  listSpacing
+}
+//const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
 
 const { pluginState } = useContext(PyroStateContext)
 const { pluginTexts,pluginVariables } = pluginState
 
 const getStyles = ()=>{
-  swapKeys("textAlignHorizontal","textAlign")
-  swapKeys("textCase","textTransform")
   switch (txtStyles.textTransform) {
     case "UPPER":txtStyles.textTransform="uppercase";break;
     case "LOWER":txtStyles.textTransform="lowercase";break;
