@@ -2,6 +2,7 @@ import React,{ useContext,useEffect,useState } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import RenderedColor from '../../Utils/RenderedColor'
+import ReturnVisibility from '../../Utils/ReturnVisibility'
 import Background from '../Background'
 import Stroke from '../Stroke'
 import Vector from '../Vector'
@@ -148,6 +149,7 @@ const Element = ({node,parent}) =>{
     }
   }
 
+
   const setVisibility = ()=>{
     if(visible!==undefined){
       const setKey = {
@@ -156,20 +158,22 @@ const Element = ({node,parent}) =>{
       dispatch({type:'SET_ATTRIBUTE',payload:setKey})
       if(!visible)tempStyle.display = "none"
     }
+
     if(pluginState.pluginConditions.hasOwnProperty(id)) {
       const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
-        const isVisible = returnVisibility(pluginState.pluginConditions[id][condition])
+        const isVisible = ReturnVisibility(pluginState,pluginState.pluginConditions[id][condition])
         if(isVisible) return true
         else return false
       })
       if(!showMe)tempStyle.display = "none"
-
     }
+    if(nodeStyle)setNodeStyle({...nodeStyle,...tempStyle})
+
   }
 
   const setChild =()=>{
     const itemSpacing = nodeTree[parent].itemSpacing
-    const firstChild = nodeTree[parent].children[0].id === id
+    const firstChild = Object.entries(nodeTree[parent].children)[0].id === id
     if(!firstChild)tempStyle[nodeTree[parent].layoutMode==="VERTICAL"?"marginTop":"marginLeft"] = itemSpacing
     const flexDirectionIsHorizontal = nodeTree[parent].layoutMode==="HORIZONTAL"
       if(flexChild&&node.layoutAlign==='STRETCH')tempStyle[flexDirectionIsHorizontal?'height':'width'] = "100%"
@@ -230,7 +234,7 @@ const Element = ({node,parent}) =>{
   }
 
   const handleEvent = eventType =>{
-    if(reactions.length)makeClickable(true)
+
     if (pluginState.pluginActions.hasOwnProperty(id)) {
       Object.keys(pluginState.pluginActions[id]).forEach(action => {
         if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
@@ -241,6 +245,7 @@ const Element = ({node,parent}) =>{
       })
       makeClickable(true)
     }
+    if(reactions.length)makeClickable(true)
   }
 
 
@@ -257,59 +262,17 @@ const Element = ({node,parent}) =>{
     dispatch({type:'ADD_CHILD_ELEMENT',payload:setNode})
   }
 
-  const returnVisibility = condition =>{
-    const isC2 = String(condition.condition2)==='true'||String(condition.condition2)==='false'?String(condition.condition2):String(pluginState.pluginVariables[condition.condition2]).toLowerCase()
-    const nbC1 = Number(pluginState.pluginVariables[condition.condition1])
-    const nbC2 = isC2 === 'mt'?0:Number(isC2)
-    const c1 = String(pluginState.pluginVariables[condition.condition1]).toLowerCase()
-    let thisString = isC2 === 'mt'?'':isC2
-    switch (condition.operator) {
-      case 'isEqualTo':
-        if(c1 === isC2) return condition.show
-        else return !condition.show
-      break;
-      case 'different':
-        if(c1 !== thisString) return condition.show
-        else return !condition.show
-      break;
-      case 'contains':
-        const idxC2 = pluginState.pluginVariables[condition.condition1].toLowerCase().indexOf(thisString)
-        if(idxC2!== -1) return condition.show
-        else return !condition.show
-      break;
-      case 'isGreaterThan':
-        if(isNaN(nbC1)||isNaN(nbC2))return false
-        if(nbC1 > nbC2) return condition.show
-        else return !condition.show
-      break;
-      case 'isInferiorTo':
-        if(isNaN(nbC1)||isNaN(nbC2))return false
-        if(nbC1 < nbC2) return condition.show
-        else return !condition.show
-      break;
-      case 'isGreaterThanOrEqualTo':
-        if(isNaN(nbC1)||isNaN(nbC2))return false
-        if(nbC1 >= nbC2) return condition.show
-        else return !condition.show
-      break;
-      case 'isInferiorOrEqualTo':
-        if(isNaN(nbC1)||isNaN(nbC2))return false
-        if(nbC1 <= nbC2) return condition.show
-        else return !condition.show
-      break;
-      default: return 'nothing'
-    }
 
-  }
 
   const updateVisibility =()=>{
     if (nodeTree&&nodeTree.hasOwnProperty(id)&&nodeTree[id].hasOwnProperty('conditions')) {
       const isVisible = Object
       .keys(nodeTree[id].conditions)
       .every(condition=>{
-        if (returnVisibility(nodeTree[id].conditions[condition])) return true
+        if (ReturnVisibility(pluginState,nodeTree[id].conditions[condition])) return true
         else return false
       })
+
       let temp = {}
       if(!isVisible)temp.display = 'none'
       else temp.display = flexParent?'flex':'block'
@@ -326,7 +289,7 @@ const Element = ({node,parent}) =>{
   useEffect(setNodeActions,[nodeTree,currentFrameID,pluginStateChanges])
   useEffect(()=>{
     if(nodeTree){
-      if(parent&&nodeTree.hasOwnProperty(parent))setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
+      if(parent&&nodeTree.hasOwnProperty(parent)&&nodeTree[parent].layoutMode !== 'NONE')setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
       if(flexParent)setFlex()
       if(opacity)setOpacity()
@@ -340,6 +303,8 @@ const Element = ({node,parent}) =>{
     }
   },[figmaData,nodeTree,flexChild])
 
+
+  useEffect(setVisibility,[pluginStateChanges])
   useEffect(updateVisibility,[updateVis,nodeTree])
   if(nodeStyle===null)return null
   let renderThis
@@ -372,7 +337,8 @@ const Element = ({node,parent}) =>{
     )
 
   }
-  if(node.hasOwnProperty('constrains')&&node.constraints.horizontal === "CENTER") {
+
+  if(node.hasOwnProperty('constraints')&&node.constraints.horizontal === "CENTER") {
     return (
       <main
         style={centerStyle("parent")}

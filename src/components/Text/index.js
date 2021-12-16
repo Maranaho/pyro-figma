@@ -1,6 +1,7 @@
 import React,{ useEffect,useState,useContext } from 'react'
 import PyroStateContext from '../../context/PyroStateContext'
 import RenderedColor from '../../Utils/RenderedColor'
+import ReturnVisibility from '../../Utils/ReturnVisibility'
 import Background from '../Background'
 import './Text.css'
 
@@ -42,7 +43,7 @@ const txtStyles = {
 //const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
 
 const { pluginState } = useContext(PyroStateContext)
-const { pluginTexts,pluginVariables } = pluginState
+const { pluginTexts,pluginVariables,pluginConditions } = pluginState
 
 const getStyles = ()=>{
   switch (txtStyles.textTransform) {
@@ -81,6 +82,14 @@ const getStyles = ()=>{
 }
 const sumStyles = ()=>{
   const temp = {...posStyle,...textStyles}
+  if(pluginState.pluginConditions.hasOwnProperty(id)) {
+    const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
+      const isVisible = ReturnVisibility(pluginState,pluginState.pluginConditions[id][condition])
+      if(isVisible) return true
+      else return false
+    })
+    if(!showMe)temp.display = "none"
+  }
   delete temp.height
   return temp
 }

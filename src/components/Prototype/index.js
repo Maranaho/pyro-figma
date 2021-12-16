@@ -17,7 +17,6 @@ const Prototype = ()=>{
       figmaData.children.every((page,i)=>{
         if(page.id === currentPageID){
           dispatch({type:'RESET_CURRENTPAGE',payload:i})
-          setTimeout(()=>dispatch({type:'RMV_LOADING'}),0)
           return false
         } else return true
       })

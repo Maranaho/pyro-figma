@@ -50,7 +50,6 @@ const PyroReducer = (state, action) => {
 
     case 'UPDATE_PLUGIN_STATE':
       let UPDATE_PLUGIN_STATE = {...state}
-
       const update_current = String(UPDATE_PLUGIN_STATE.pluginState.pluginVariables[action.payload.pluginAction.targetVariable.id])
       const update_target = action.payload.pluginAction.targetVariable.targetValue
       if(action.payload.eventType.indexOf('MouseEnter') !== -1) UPDATE_PLUGIN_STATE.hoverEnter = update_current
@@ -73,10 +72,19 @@ const PyroReducer = (state, action) => {
         UPDATE_PLUGIN_STATE.hoverEnter = null
       }
 
-
-
       UPDATE_PLUGIN_STATE.updateVis = !UPDATE_PLUGIN_STATE.updateVis
     return UPDATE_PLUGIN_STATE;
+
+    case 'ADD_CONDITION':
+      let ADD_CONDITION = {...state}
+      if(ADD_CONDITION.pluginState === null) {
+        let newCondition = {}
+        newCondition['pluginConditions'][action.payload.nodeID] = action.payload.conditions
+        ADD_CONDITION.pluginState = newCondition
+      } else ADD_CONDITION.pluginState.pluginConditions[action.payload.nodeID] = action.payload.conditions
+      ADD_CONDITION.pluginStateChanges = !ADD_CONDITION.pluginStateChanges
+      ADD_CONDITION.loading = false
+    return ADD_CONDITION;
 
     case 'SET_PLUGIN_STATE':
       let SET_PLUGIN_STATE = {...state}
@@ -227,7 +235,7 @@ const PyroReducer = (state, action) => {
       let UPDATE_FILE_DATA_FROM_FIGMA = {...state}
       UPDATE_FILE_DATA_FROM_FIGMA.authData = action.payload.authData
       UPDATE_FILE_DATA_FROM_FIGMA.figmaData = action.payload.pageData
-      UPDATE_FILE_DATA_FROM_FIGMA.loading = false
+      //UPDATE_FILE_DATA_FROM_FIGMA.loading = false
       UPDATE_FILE_DATA_FROM_FIGMA.nodeTree = null
     return UPDATE_FILE_DATA_FROM_FIGMA;
 

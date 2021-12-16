@@ -42,7 +42,7 @@ const App = ()=>{
         dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:{authData,pageData}})
         dispatch({type:'SET_CURRENT_FRAME_ID',payload:pageData.children[0].prototypeStartNodeID})
       } else console.log('App 43')
-    }).catch(error => console.log(error))
+    }).catch(error => console.error(error))
   }
 
   const getSelection =()=>{
@@ -64,7 +64,6 @@ const App = ()=>{
         acc[node.id] = node
         return acc
       },{})
-
       let pluginActionsState = pluginActions.reduce((acc,node)=>{
         pluginActionsDB.doc(node.id).collection('actions').get()
         .then(snap=>{
@@ -81,6 +80,8 @@ const App = ()=>{
           const conditions = {}
           snap.forEach(doc => conditions[doc.id] = doc.data())
           acc[node.id] = conditions
+          const nodeID = node.id
+          dispatch({type:'ADD_CONDITION',payload:{nodeID,conditions}})
         })
         return acc
       },{})

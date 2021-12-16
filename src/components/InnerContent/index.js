@@ -11,7 +11,7 @@ const InnerContent = ()=>{
   const currentPage = figmaData.children[currentPageIDX]
   const currentFrame = currentPage.children[currentFrameIDX]
 
-  const dispatchNodes= child =>{
+  const dispatchNodes = child =>{
     const { id,type,children,name } = child
     if(children)children.forEach(itm=>{
       const baby = {...itm}
