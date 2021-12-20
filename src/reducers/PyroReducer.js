@@ -34,11 +34,23 @@ let initialPyroState = {
   firstFrame:null,
   updateVis:false,
   noPyroProto:false,
+  userIsAllowed:false,
   pristine:true,
+  userData:null,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'AUTHORISE_USER':
+      let AUTHORISE_USER = {...state}
+      AUTHORISE_USER.userIsAllowed = action.payload
+    return AUTHORISE_USER;
+
+    case 'SET_USER':
+      let SET_USER = {...state}
+      SET_USER.userData = action.payload
+    return SET_USER;
 
     case 'NOT_PRISTINE':
       let NOT_PRISTINE = {...state}
@@ -149,7 +161,9 @@ const PyroReducer = (state, action) => {
 
     case 'SET_ATTRIBUTE':
       let SET_ATTRIBUTE = {...state}
-      SET_ATTRIBUTE.nodeTree[action.payload.id][action.payload.attribute] = action.payload.value
+      if(SET_ATTRIBUTE.nodeTree.hasOwnProperty(action.payload.id)){
+        SET_ATTRIBUTE.nodeTree[action.payload.id][action.payload.attribute] = action.payload.value
+      }
     return SET_ATTRIBUTE;
 
     case 'ADD_CHILD_ELEMENT':

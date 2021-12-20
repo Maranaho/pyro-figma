@@ -42,7 +42,6 @@ const txtStyles = {
 }
 
 const { pluginState } = useContext(PyroStateContext)
-const { pluginTexts,pluginVariables,pluginConditions } = pluginState
 
 const getStyles = ()=>{
   switch (txtStyles.textTransform) {
@@ -94,8 +93,8 @@ const sumStyles = ()=>{
   return temp
 }
 useEffect(getStyles,[])
-
-
+if(!pluginState)return null
+const { pluginTexts,pluginVariables,pluginConditions } = pluginState
   return (
     <p
       onClick={handleClick}

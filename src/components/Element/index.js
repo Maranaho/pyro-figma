@@ -160,6 +160,16 @@ const Element = ({node,parent}) =>{
       tempStyle.left = 0
     }
   }
+  const conditionBasedVisibility =()=>{
+    if(pluginState.pluginConditions.hasOwnProperty(id)) {
+      const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
+        const isVisible = ReturnVisibility(pluginState,pluginState.pluginConditions[id][condition])
+        if(isVisible) return true
+        else return false
+      })
+      if(!showMe)tempStyle.display = "none"
+    }
+  }
 
 
   const setVisibility = ()=>{
@@ -171,14 +181,7 @@ const Element = ({node,parent}) =>{
       if(!visible)tempStyle.display = "none"
     }
 
-    if(pluginState.pluginConditions.hasOwnProperty(id)) {
-      const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
-        const isVisible = ReturnVisibility(pluginState,pluginState.pluginConditions[id][condition])
-        if(isVisible) return true
-        else return false
-      })
-      if(!showMe)tempStyle.display = "none"
-    }
+    if(pluginState)conditionBasedVisibility()
     if(nodeStyle)setNodeStyle({...nodeStyle,...tempStyle})
 
   }
@@ -247,18 +250,20 @@ const Element = ({node,parent}) =>{
   }
 
   const handleEvent = eventType =>{
+    if (pluginState) {
 
-    if (pluginState.pluginActions.hasOwnProperty(id)) {
-      Object.keys(pluginState.pluginActions[id]).forEach(action => {
-        if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
-          dispatch({type:'UPDATE_PLUGIN_STATE',payload:{
-            pluginAction:pluginState.pluginActions[id][action],eventType
-          }})
-        }
-      })
-      makeClickable(true)
+      if (pluginState.pluginActions.hasOwnProperty(id)) {
+        Object.keys(pluginState.pluginActions[id]).forEach(action => {
+          if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
+            dispatch({type:'UPDATE_PLUGIN_STATE',payload:{
+              pluginAction:pluginState.pluginActions[id][action],eventType
+            }})
+          }
+        })
+        makeClickable(true)
+      }
+      if(reactions.length)makeClickable(true)
     }
-    if(reactions.length)makeClickable(true)
   }
 
 
@@ -268,11 +273,14 @@ const Element = ({node,parent}) =>{
   }
 
   const setNodeActions = ()=>{
-    let setNode = {...node}
-    const { pluginActions,pluginConditions } = pluginState
-    if(pluginActions.hasOwnProperty(id))setNode.actions = pluginActions[id]
-    if(pluginConditions.hasOwnProperty(id))setNode.conditions = pluginConditions[id]
-    dispatch({type:'ADD_CHILD_ELEMENT',payload:setNode})
+    if (pluginState) {
+
+      let setNode = {...node}
+      const { pluginActions,pluginConditions } = pluginState
+      if(pluginActions.hasOwnProperty(id))setNode.actions = pluginActions[id]
+      if(pluginConditions.hasOwnProperty(id))setNode.conditions = pluginConditions[id]
+      dispatch({type:'ADD_CHILD_ELEMENT',payload:setNode})
+    }
   }
 
 
@@ -314,7 +322,7 @@ const Element = ({node,parent}) =>{
 
   useEffect(setNodeActions,[nodeTree,currentFrameID,pluginStateChanges])
   useEffect(()=>{
-    if(nodeTree&&absoluteBoundingBox){
+    if(nodeTree&&Object.keys(nodeTree).length&&absoluteBoundingBox){
       if(parent&&nodeTree.hasOwnProperty(parent)&&nodeTree[parent].layoutMode !== 'NONE')setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
       if(flexParent)setFlex()
@@ -331,7 +339,9 @@ const Element = ({node,parent}) =>{
   },[figmaData,nodeTree,flexChild])
 
 
-  useEffect(setVisibility,[pluginStateChanges])
+  useEffect(()=>{
+    if (nodeTree,pluginStateChanges) setVisibility()
+  },[nodeTree,pluginStateChanges])
   useEffect(updateVisibility,[updateVis,nodeTree])
   if(nodeStyle===null)return null
   let renderThis
@@ -350,7 +360,7 @@ const Element = ({node,parent}) =>{
         className={'Element '+ classNames }>
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
-        {(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
+        {pluginState&&(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
         {node.children&&Object.keys(node.children)
           .sort((a,b)=>sortChildren(a,b))
           .map(key=>{

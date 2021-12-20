@@ -3,13 +3,14 @@ import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import InputDimensions from '../InputDimensions'
 import User from '../User'
+import SignOut from '../SignOut'
 import Dimensions from '../Dimensions'
 import pyro from '../../assets/images/pyro_white.svg'
 import './ProtoActions.css'
 
 const ProtoActions = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { loading,figmaData,token,currentPageIDX,figmaFile,me,currentFrameID } = useContext(PyroStateContext)
+  const { userData,loading,figmaData,token,currentPageIDX,figmaFile,currentFrameID } = useContext(PyroStateContext)
   const [ pagesOpen,setPagesOpen ] = useState(false)
   const handlePageMenuClick = e =>{
     dispatch({type:'SET_CURRENT_PAGE_IDX',payload:Number(e.target.getAttribute('idx'))})
@@ -31,7 +32,8 @@ const ProtoActions = ()=>{
         <button className="btn full"><span>Share</span></button>
         <Dimensions/>
         <InputDimensions/>
-        {me&&<User/>}
+        {userData&&<User/>}
+        <SignOut/>
     </section>
   </nav>
   )

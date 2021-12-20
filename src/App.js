@@ -32,17 +32,6 @@ const App = ()=>{
   const [pluginTexts] = useCollectionData(pluginTextsDB,{idField:'id'})
   const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
 
-  const getData = () =>{
-    db.get()
-    .then(doc =>{
-      if (doc.exists) {
-        const {authData,pageData} = doc.data()
-        dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:{authData,pageData}})
-        dispatch({type:'SET_CURRENT_FRAME_ID',payload:pageData.children[0].prototypeStartNodeID})
-      } else dispatch({type:'NO_PROTO'})
-    }).catch(error => console.error(error))
-  }
-
   const waitForPyroState = ()=>{
     if(pristine){
       dispatch({type:'NOT_PRISTINE'})
@@ -92,12 +81,13 @@ const App = ()=>{
         })
         return acc
       },{})
-      dispatch({type:'SET_PLUGIN_STATE',payload:{pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState,pluginFields:pluginFieldsState,pluginTexts:pluginTextsState}})
+      const plugState = {pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState,pluginFields:pluginFieldsState,pluginTexts:pluginTextsState}
+      dispatch({type:'SET_PLUGIN_STATE',payload:plugState})
     }
   }
 
   useEffect(waitForPyroState,[pristine])
-  useEffect(getData,[])
+
   useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions,pluginFields,pluginTexts])
   if(noPyroProto) return <NoPyro/>
   return <Prototype/>

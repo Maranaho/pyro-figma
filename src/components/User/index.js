@@ -3,12 +3,13 @@ import PyroStateContext from '../../context/PyroStateContext'
 import './User.css'
 
 const User = ()=>{
-  const { me } = useContext(PyroStateContext)
-  const { img_url,handle } = me
+  const { userData } = useContext(PyroStateContext)
+  const { displayName,email,photoURL} = userData
+
   return (
     <div className="User">
-      <img src={img_url} width="30" alt={handle}/>
-      <span>{handle}</span>
+      {photoURL&&<img src={photoURL} width="30" alt={displayName}/>}
+      <span>{displayName}</span>
     </div>
   )
 }
