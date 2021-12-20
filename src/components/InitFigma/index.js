@@ -10,7 +10,7 @@ import App from '../../App'
 
 const InitFigma = ()=>{
   const user = useAuth()
-  const fileKey = window.location.href.split('/figma/')[1]
+  const fileKey = window.location.href.split('/figma/?key=')[1]
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
   const { userData,authData,userIsAllowed,figmaFile } = state
   const db = firestore.collection('figma-files').doc(fileKey)
