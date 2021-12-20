@@ -12,6 +12,7 @@ import Ellipse from '../Ellipse'
 import './Element.css'
 
 const Element = ({node,parent}) =>{
+
   const dispatch = useContext(PyroDispatchContext)
   const { updateVis,pluginState,pluginStateChanges,rotations,vectors,figmaData,currentFrameID,nodeTree,protoWidth,protoHeight,currentPageIDX } = useContext(PyroStateContext)
 
@@ -22,6 +23,7 @@ const Element = ({node,parent}) =>{
   const [ nodeStyle,setNodeStyle ] = useState(null)
   const [ flexChild,setFlexChild ] = useState(false)
   const [ clickable,makeClickable ] = useState(false)
+  const [ classNames,setClassNames ] = useState('')
   const flexParent = node.hasOwnProperty("layoutMode")
   let tempStyle = {}
 
@@ -43,6 +45,12 @@ const Element = ({node,parent}) =>{
       tempStyle.width = width
       tempStyle.height = height
     }
+
+    if(effects.length){
+      tempStyle.width = node.width
+      tempStyle.height = node.height
+    }
+
   }
 
   const setOpacity =()=> tempStyle.opacity = opacity.toFixed(2)
@@ -60,7 +68,6 @@ const Element = ({node,parent}) =>{
     }
     return axis
   }
-
 
   const setFlex =()=>{
     const { primaryAxisAlignItems,counterAxisAlignItems } = node
@@ -91,6 +98,7 @@ const Element = ({node,parent}) =>{
   const setRotate =()=>tempStyle.transform = "rotate("+Math.round(rotations[id].rotation)+"deg)"
   //@TODO rotate shadow as well :)
 
+
   const setPosition =()=>{
     const { x,y,width,height } = absoluteBoundingBox
     tempStyle.position = "absolute"
@@ -101,7 +109,7 @@ const Element = ({node,parent}) =>{
       switch (constraints.horizontal) {
         case "SCALE":
           tempStyle.left = left
-          tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
+          //tempStyle.width = width/currentFrame.absoluteBoundingBox.width*100 + "%"
         ;break;
         case "MIN":case "CENTER":tempStyle.left = left ;break;
         case "MAX": tempStyle.right = currentFrame.absoluteBoundingBox.width - (width + left);break;
@@ -113,7 +121,7 @@ const Element = ({node,parent}) =>{
       switch (constraints.vertical) {
         case "SCALE":
           tempStyle.top = top
-          tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
+          //tempStyle.height = height/currentFrame.absoluteBoundingBox.height*100 + "%"
           ;break;
         case "MIN":case "CENTER":tempStyle.top = top;break;
         case "MAX":tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top);break;
@@ -147,6 +155,10 @@ const Element = ({node,parent}) =>{
         ;break;
       }
     }
+    if(nodeTree.hasOwnProperty(node.parentNode)&&nodeTree[node.parentNode].type === 'GROUP'){
+      tempStyle.top = 0
+      tempStyle.left = 0
+    }
   }
 
 
@@ -172,10 +184,12 @@ const Element = ({node,parent}) =>{
   }
 
   const setChild =()=>{
-    const itemSpacing = nodeTree[parent].itemSpacing
-    const firstChild = Object.entries(nodeTree[parent].children)[0].id === id
-    if(!firstChild)tempStyle[nodeTree[parent].layoutMode==="VERTICAL"?"marginTop":"marginLeft"] = itemSpacing
-    const flexDirectionIsHorizontal = nodeTree[parent].layoutMode==="HORIZONTAL"
+    const parentNodee = nodeTree[parent]
+    const itemSpacing = parentNodee.itemSpacing
+    const parentChildren = Object.keys(parentNodee.children)
+    const firstChild = parentNodee.order[0] === id
+    if(!firstChild&&parentChildren.length>1)tempStyle[parentNodee.layoutMode==="VERTICAL"?"marginTop":"marginLeft"] = itemSpacing
+    const flexDirectionIsHorizontal = parentNodee.layoutMode==="HORIZONTAL"
       if(flexChild&&node.layoutAlign==='STRETCH')tempStyle[flexDirectionIsHorizontal?'height':'width'] = "100%"
       if (flexChild) {
         if(node.layoutGrow===1)tempStyle.flex = 1
@@ -228,7 +242,6 @@ const Element = ({node,parent}) =>{
       childStyle.width = calcChildWidth
       if(!centerParent.width)delete centerParent.width
       if(!childStyle.width)delete childStyle.width
-
       return isParent==='parent'?centerParent:childStyle
     } else return {background:'red'}
   }
@@ -280,7 +293,21 @@ const Element = ({node,parent}) =>{
     }
   }
 
+  const sortChildren = (a,b)=>{
+    const { order } = node
+    return order.indexOf(a) - order.indexOf(b)
+  }
 
+
+if(clickable)console.log(name);
+  useEffect(()=>{
+    let classes = `${type} ${name.split(' ').join('_')}  ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${clickable||transitionNodeID?'clickable':''}`
+    if(flexParent) {
+      if(node.layoutMode === 'VERTICAL')classes += ' column'
+      else classes += ' row'
+    }
+    setClassNames(classes)
+  },[nodeTree])
 
   useEffect(()=>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
@@ -288,7 +315,7 @@ const Element = ({node,parent}) =>{
 
   useEffect(setNodeActions,[nodeTree,currentFrameID,pluginStateChanges])
   useEffect(()=>{
-    if(nodeTree){
+    if(nodeTree&&absoluteBoundingBox){
       if(parent&&nodeTree.hasOwnProperty(parent)&&nodeTree[parent].layoutMode !== 'NONE')setFlexChild(nodeTree[parent].hasOwnProperty("layoutMode"))
       setRadius()
       if(flexParent)setFlex()
@@ -296,6 +323,7 @@ const Element = ({node,parent}) =>{
       setDimension()
       //if(rotations&&!rotations.hasOwnProperty('noRotations'))setRotate()
       setEffects()
+
       if(!flexChild)setPosition()
       else setChild()
       setVisibility()
@@ -316,15 +344,17 @@ const Element = ({node,parent}) =>{
     case "ELLIPSE":renderThis = <Ellipse handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     default: renderThis = (
       <article
-        style={type!=='GROUP'?nodeStyle:null}
+        style={type==='GROUP'&&!flexChild?null:nodeStyle}
         onMouseEnter={()=>handleEvent(['MouseEnter','Hover'])}
         onMouseLeave={()=>handleEvent(['MouseLeave','Hover'])}
         onClick={handleClick}
-        className={`Element ${type} ${name.split(' ').join('_')} ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${clickable||transitionNodeID?'clickable':''}`}>
+        className={'Element '+ classNames }>
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
         {(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
-        {node.children&&Object.keys(node.children).map(key=>{
+        {node.children&&Object.keys(node.children)
+          .sort((a,b)=>sortChildren(a,b))
+          .map(key=>{
           const child = node.children[key]
           return (
             <Element
@@ -339,6 +369,7 @@ const Element = ({node,parent}) =>{
   }
 
   if(node.hasOwnProperty('constraints')&&node.constraints.horizontal === "CENTER") {
+
     return (
       <main
         style={centerStyle("parent")}

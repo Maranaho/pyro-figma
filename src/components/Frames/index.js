@@ -33,12 +33,17 @@ const Frames = ()=>{
     }
   }
 
-    useEffect(()=>{
-      if(breakPoints&&breakPoints.length){
-        const currentId = breakPoints[currentBreakpoint].index
-        if(currentFrameID!==currentId)dispatch({type:'SET_CURRENT_FRAME_IDX',payload:currentId})
+  const updateBreakPoint = () =>{
+    if(breakPoints&&breakPoints.length){
+      const currentId = breakPoints.indexOf(breakPoints[currentBreakpoint])
+      if(currentFrameID!==currentId){
+        dispatch({type:'SET_CURRENT_FRAME_ID',payload:breakPoints[currentBreakpoint].id})
+        dispatch({type:'SET_CURRENT_FRAME_IDX',payload:currentId})
       }
-    },[currentBreakpoint,breakPoints])
+    }
+  }
+
+  useEffect(updateBreakPoint,[currentBreakpoint,breakPoints])
 
   useEffect(checkRWD,[figmaData,currentPageIDX])
   if(!figmaData.children[currentPageIDX].hasOwnProperty('children'))return <Empty/>

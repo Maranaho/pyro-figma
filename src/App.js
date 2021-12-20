@@ -5,6 +5,7 @@ import PyroStateContext from './context/PyroStateContext'
 import PyroDispatchContext from './context/PyroDispatchContext'
 
 import Prototype from './components/Prototype'
+import NoPyro from './components/NoPyro'
 import './bolt_fonts.css'
 import './assets/iconfont/harmonyicons.css'
 import './App.css'
@@ -16,7 +17,7 @@ const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
 
 const App = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { figmaData,figmaFile,loading,token,me } = useContext(PyroStateContext)
+  const { noPyroProto,figmaData,figmaFile,loading,token,me } = useContext(PyroStateContext)
   const db = firestore.collection('figma-files').doc(figmaFile)
   const fileDB = db.collection("fileData")
   const pluginVariablesDB = fileDB.doc("pluginUIData").collection("variables")
@@ -41,7 +42,7 @@ const App = ()=>{
         const {authData,pageData} = doc.data()
         dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:{authData,pageData}})
         dispatch({type:'SET_CURRENT_FRAME_ID',payload:pageData.children[0].prototypeStartNodeID})
-      } else console.log('App 43')
+      } else dispatch({type:'NO_PROTO'})
     }).catch(error => console.error(error))
   }
 
@@ -93,6 +94,7 @@ const App = ()=>{
   //useEffect(getSelection,[selection])
   useEffect(getData,[])
   useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions,pluginFields,pluginTexts])
+  if(noPyroProto) return <NoPyro/>
   return <Prototype/>
 }
 

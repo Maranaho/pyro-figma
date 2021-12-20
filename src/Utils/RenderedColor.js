@@ -3,5 +3,9 @@ const floatToRGB = channel =>{
   else if(channel === 1) return 255
   else return channel
 }
-const RenderedColor = ({r,g,b}) => 'rgb('+floatToRGB(r)+','+floatToRGB(g)+','+floatToRGB(b)+')'
+const RenderedColor = color => {
+  const {r,g,b,a} = color
+  const alpha = a?','+a+')':')'
+  return 'rgb('+floatToRGB(r)+','+floatToRGB(g)+','+floatToRGB(b)+alpha
+}
 export default RenderedColor

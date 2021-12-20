@@ -1,8 +1,12 @@
 .centerParent,.childStyle{margin-top: 0 !important}
 .Element{
   position: relative;
-  &.flexParent .childStyle{
-    flex: 1;
+  &.flexParent {
+    // &.column{flex-direction: column-reverse !important}
+    // &.row{flex-direction: row-reverse !important}
+    .childStyle{
+      flex: 1;
+    }
   }
 }
 .centerParent{
@@ -14,7 +18,7 @@
   .childStyle {
     position: relative;
     margin: 0 auto;
-    .flexChild {flex: 1}
+    //.flexChild {flex: 1}
     .Element,p{
       position: relative !important;
       top:inherit !important;

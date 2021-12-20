@@ -28,13 +28,15 @@ const Prototype = ()=>{
     if(nodeTree){
       const frame = figmaData.children[currentPageIDX].children[currentFrameID]
       const key = Object.keys(frame)
-      .filter(key=>frame.name.toLowerCase().indexOf(key.split("**")[0])!== -1)
+      .filter(key=>key.indexOf("**")!== -1)
       const setPoints = Object.keys(figmaData.children[currentPageIDX].children)
       .filter(childKey=>figmaData.children[currentPageIDX].children[childKey].hasOwnProperty(key[0]))
       .map(childKey=>{
         const currFrame = figmaData.children[currentPageIDX].children[childKey]
-        return {index:currFrame.index,id:currFrame.id,name:currFrame.name,breakPoint:currFrame[key[0]]}
+        return {id:currFrame.id,name:currFrame.name,breakPoint:currFrame[key[0]]}
       }).sort((a,b)=>a.breakPoint - b.breakPoint)
+
+
       dispatch({type:'SET_BREAKPOINTS',payload:setPoints})
     }
   }

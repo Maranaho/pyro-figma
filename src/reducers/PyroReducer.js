@@ -31,11 +31,18 @@ let initialPyroState = {
   pluginState:null,
   pluginStateChanges:false,
   hoverEnter:null,
+  firstFrame:null,
   updateVis:false,
+  noPyroProto:false,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'NO_PROTO':
+      let NO_PROTO = {...state}
+      NO_PROTO.noPyroProto = true
+    return NO_PROTO;
 
     case 'SET_FILEKEY':
       let SET_FILEKEY = {...state}

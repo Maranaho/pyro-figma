@@ -40,7 +40,6 @@ const txtStyles = {
   lineHeight,
   listSpacing
 }
-//const swapKeys = (oldKey,newKey)=>delete Object.assign(txtStyles, fontStyle, {[newKey]: fontStyle[oldKey] })[oldKey]
 
 const { pluginState } = useContext(PyroStateContext)
 const { pluginTexts,pluginVariables,pluginConditions } = pluginState
@@ -89,6 +88,7 @@ const sumStyles = ()=>{
       else return false
     })
     if(!showMe)temp.display = "none"
+    else temp.display = "block"
   }
   delete temp.height
   return temp
