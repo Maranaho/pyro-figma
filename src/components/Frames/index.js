@@ -8,7 +8,6 @@ import './Frames.css'
 import './../../resize.css'
 
 const Frames = ()=>{
-
   const dispatch = useContext(PyroDispatchContext)
   const { currentBreakpoint,breakPoints,nodeTree,figmaData,currentPageIDX,currentFrameID,isMobile,protoWidth,protoHeight,smoov,minWidth, minHeight } = useContext(PyroStateContext)
   const currentPage = figmaData.children[currentPageIDX]

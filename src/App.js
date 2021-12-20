@@ -17,7 +17,7 @@ const FIGMA_SESSION = process.env.REACT_APP_FIGMA_SESSION
 
 const App = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { noPyroProto,figmaData,figmaFile,loading,token,me } = useContext(PyroStateContext)
+  const { pristine,pluginState,noPyroProto,figmaData,figmaFile,loading } = useContext(PyroStateContext)
   const db = firestore.collection('figma-files').doc(figmaFile)
   const fileDB = db.collection("fileData")
   const pluginVariablesDB = fileDB.doc("pluginUIData").collection("variables")
@@ -25,15 +25,12 @@ const App = ()=>{
   const pluginConditionsDB = fileDB.doc("pluginUIData").collection("nodeConditions")
   const pluginFieldsDB = fileDB.doc("pluginUIData").collection("nodeFields")
   const pluginTextsDB = fileDB.doc("pluginUIData").collection("nodeTexts")
-  const selectionDB = fileDB.doc("users").collection("selections")
-  const querySelect = selectionDB.where("email", "==", me?me.email:'null')
   const [pluginVariables] = useCollectionData(pluginVariablesDB,{idField:'id'})
   const [pluginActions] = useCollectionData(pluginActionsDB,{idField:'id'})
   const [pluginConditions] = useCollectionData(pluginConditionsDB,{idField:'id'})
   const [pluginFields] = useCollectionData(pluginFieldsDB,{idField:'id'})
   const [pluginTexts] = useCollectionData(pluginTextsDB,{idField:'id'})
   const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
-  const [selection] = useCollectionData(querySelect,{idField:'id'})
 
   const getData = () =>{
     db.get()
@@ -46,9 +43,18 @@ const App = ()=>{
     }).catch(error => console.error(error))
   }
 
-  const getSelection =()=>{
-    if(selection&&selection.length)dispatch({type:'SET_SELECTION',payload:selection[0]})
+  const waitForPyroState = ()=>{
+    if(pristine){
+      dispatch({type:'NOT_PRISTINE'})
+      return
+    }
+    if(!pluginConditions)dispatch({type:'RMV_LOADING'})
+
   }
+
+  // const getSelection =()=>{
+  //   if(selection&&selection.length)dispatch({type:'SET_SELECTION',payload:selection[0]})
+  // }
 
   const getPluginState = ()=>{
     if(pluginVariables&&pluginActions&&pluginConditions&&pluginFields&&pluginTexts){
@@ -86,12 +92,11 @@ const App = ()=>{
         })
         return acc
       },{})
-
       dispatch({type:'SET_PLUGIN_STATE',payload:{pluginVariables:pluginVariablesState,pluginActions:pluginActionsState,pluginConditions:pluginConditionsState,pluginFields:pluginFieldsState,pluginTexts:pluginTextsState}})
     }
   }
 
-  //useEffect(getSelection,[selection])
+  useEffect(waitForPyroState,[pristine])
   useEffect(getData,[])
   useEffect(getPluginState,[pluginVariables,pluginActions,pluginConditions,pluginFields,pluginTexts])
   if(noPyroProto) return <NoPyro/>

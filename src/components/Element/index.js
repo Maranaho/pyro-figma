@@ -299,7 +299,6 @@ const Element = ({node,parent}) =>{
   }
 
 
-if(clickable)console.log(name);
   useEffect(()=>{
     let classes = `${type} ${name.split(' ').join('_')}  ${flexChild?'flexChild':''} ${flexParent?'flexParent':''} ${clickable||transitionNodeID?'clickable':''}`
     if(flexParent) {

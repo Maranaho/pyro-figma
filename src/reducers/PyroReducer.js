@@ -34,10 +34,16 @@ let initialPyroState = {
   firstFrame:null,
   updateVis:false,
   noPyroProto:false,
+  pristine:true,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'NOT_PRISTINE':
+      let NOT_PRISTINE = {...state}
+      NOT_PRISTINE.pristine = false
+    return NOT_PRISTINE;
 
     case 'NO_PROTO':
       let NO_PROTO = {...state}
