@@ -33,7 +33,7 @@ const ProtoActions = ()=>{
         <Dimensions/>
         <InputDimensions/>
         {userData&&<User/>}
-        <SignOut/>
+        <SignOut css="full"/>
     </section>
   </nav>
   )

@@ -3,16 +3,21 @@ import { firestore } from '../../Utils/firebase'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 import PyroReducer, { initialPyroState } from '../../reducers/PyroReducer'
+import pyro from '../../assets/images/pyro_white.svg'
 import useAuth from '../../hooks/useAuth'
 import Login from '../Login'
 import UserNotAllowed from '../UserNotAllowed'
+import User from '../User'
+import SignOut from '../SignOut'
+import SignIn from '../SignIn'
+import Pile from '../Pile'
 import App from '../../App'
 
 const InitFigma = ()=>{
   const user = useAuth()
   const fileKey = window.location.href.split('/figma/?key=')[1]
   const [ state, dispatch ] = useReducer(PyroReducer, initialPyroState)
-  const { userData,authData,userIsAllowed,figmaFile } = state
+  const { requestSent,userData,authData,userIsAllowed,figmaFile } = state
   const db = firestore.collection('figma-files').doc(fileKey)
 
   const updateUser = ()=>{
@@ -64,9 +69,18 @@ const InitFigma = ()=>{
   return (
     <PyroDispatchContext.Provider value={dispatch}>
       <PyroStateContext.Provider value={state}>
-        {user&&authorizeUser()&&<App/>}
-        {user&&!authorizeUser()&&<UserNotAllowed/>}
-        {!user&&<Login/>}
+        {user&&authorizeUser()?<App/>:(
+          <main className="SignIn">
+            <section>
+              <img src={pyro} height="27" alt="pyro"/>
+              {userData&&<User/>}
+            </section>
+            {user&&!authorizeUser()?<UserNotAllowed/>:<Login/>}
+            {requestSent&&<Pile msg="Request sent succesfully"/>}
+            <small>*Better design coming up!</small>
+          </main>
+        )}
+
       </PyroStateContext.Provider>
     </PyroDispatchContext.Provider>
   )

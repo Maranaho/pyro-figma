@@ -40,6 +40,11 @@ button{cursor: pointer}
 }
 .btn{
   cursor: pointer;
+  text-transform: uppercase;
+  font-size: .8em;
+  padding: 8px 25px;
+  border-radius: 20px;
+  color: #fff;
   &.full{
     a{
       color: #fff;
@@ -47,12 +52,11 @@ button{cursor: pointer}
     }
     background: #18a0fb;
     border: none;
-    color: #fff;
-    text-transform: uppercase;
-    font-size: .8em;
-    padding: 5px 15px;
-    border-radius: 5px;
     &:hover{background: #44b4ff}
+  }
+  &.ghost{
+    background: none;
+    border:1px solid #fff;
   }
   &:disabled{opacity: .5}
 }
@@ -68,4 +72,44 @@ button{cursor: pointer}
   max-height: calc(100vh - 35px)
 }
 
-.SignOut {margin:0 15px}
+
+.SignIn{
+  background: #262728;
+  height: 100%;
+  color: #fff;
+  position: relative;
+  small{
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    opacity: .7;
+  }
+  h1 {/*100;300;400;700;900*/
+    font-size: 5em;
+    font-weight: 300;
+    line-height: 1em;
+    margin: 0 0 20px;
+  }
+  h2 {/*100;300;400;700;900*/
+    font-size: 1.6em;
+    font-weight: 700;
+    line-height: 1em;
+    margin: 0;
+  }
+  >main{
+    display: flex;
+    justify-content: center;
+    margin-top: 10vw;
+    > section{min-width: 400px}
+    .btnCtn{
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+  }
+  >section{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+  }
+}

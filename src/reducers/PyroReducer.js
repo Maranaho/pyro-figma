@@ -37,10 +37,21 @@ let initialPyroState = {
   userIsAllowed:false,
   pristine:true,
   userData:null,
+  requestSent:false,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'HIDE_REQUEST':
+      let HIDE_REQUEST = {...state}
+      HIDE_REQUEST.requestSent = false
+    return HIDE_REQUEST;
+
+    case 'SHOW_REQUEST':
+      let SHOW_REQUEST = {...state}
+      SHOW_REQUEST.requestSent = true
+    return SHOW_REQUEST;
 
     case 'AUTHORISE_USER':
       let AUTHORISE_USER = {...state}

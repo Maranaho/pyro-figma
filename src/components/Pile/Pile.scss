@@ -1,0 +1,24 @@
+@keyframes showUp {
+  0%{transform: translateY(150%)}
+  25%{transform: translateY(-200%)}
+  65%{transform: translateY(-200%)}
+  100%{transform: translateY(150%)}
+}
+.Pile{
+  position: fixed;
+  bottom:0;
+  left:0;
+  width:100vw;
+  display: flex;
+  justify-content: center;
+  article{
+    background: #000;
+    padding: 20px 50px;
+    border-radius: 50px;
+    font-size: 1.2em;
+    color: #fff;
+    animation: showUp 3s cubic-bezier(0.88, 0.01, 0.22, 1.17);
+    transform: translateY(150%);
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  }
+}

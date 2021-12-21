@@ -1,17 +1,16 @@
-import { useContext } from 'react'
-import PyroStateContext from '../../context/PyroStateContext'
 import SignIn from '../SignIn'
 import './Login.css'
 
 const Login = ()=>{
 
-  const { onBoarding } = useContext(PyroStateContext)
-
   return (
     <main className="Login">
-      <h1>Login</h1>
-      <p>Better design coming soon</p>
-      <SignIn/>
+      <section>
+        <h1>Welcome 😊</h1>
+        <h2>Please sign in <br/>so we can let you in!</h2>
+        <p>Let me check if you  have access</p>
+        <SignIn/>
+      </section>
     </main>
   )
 }
