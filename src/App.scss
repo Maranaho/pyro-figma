@@ -65,7 +65,7 @@ button{cursor: pointer}
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid #404243;
+  border-top: 1px solid #4042436e;
   height: 100%;
   box-sizing: border-box;
   transition: .4s ease;
@@ -110,6 +110,6 @@ button{cursor: pointer}
   >section{
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 4px 10px;
   }
 }

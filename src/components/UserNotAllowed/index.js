@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { useContext,useState,useEffect } from 'react'
+import Loading from '../Loading'
 import PyroStateContext from '../../context/PyroStateContext'
 import PyroDispatchContext from '../../context/PyroDispatchContext'
 
@@ -6,17 +7,23 @@ import SignOut from '../SignOut'
 import './UserNotAllowed.css'
 
 const UserNotAllowed = ()=>{
-const dispatch = useContext(PyroDispatchContext)
-const { userData } = useContext(PyroStateContext)
-const sendRequest= ()=>{
-  console.log('sendRequest');
-}
-const handleRequest = ()=>{
-  sendRequest()
-  dispatch({type:'SHOW_REQUEST'})
-}
-if(!userData)return null
-const { displayName,email } = userData
+  const [showUp,setShowUp] = useState(false)
+  const dispatch = useContext(PyroDispatchContext)
+  const { userData } = useContext(PyroStateContext)
+  const sendRequest= ()=>{
+    console.log('sendRequest');
+  }
+  const handleRequest = ()=>{
+    sendRequest()
+    dispatch({type:'SHOW_REQUEST'})
+  }
+  useEffect(()=>{
+    const unSub = setTimeout(()=>setShowUp(true),500)
+    return ()=> clearTimeout(unSub)
+  },[])
+  if(!showUp) return <Loading/>
+  if(!userData)return null
+  const { displayName,email } = userData
   return (
     <main className="UserNotAllowed">
       <section>

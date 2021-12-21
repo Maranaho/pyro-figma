@@ -1,8 +1,15 @@
+import { useState,useEffect } from 'react'
+import Loading from '../Loading'
 import SignIn from '../SignIn'
 import './Login.css'
 
 const Login = ()=>{
-
+  const [showUp,setShowUp] = useState(false)
+  useEffect(()=>{
+    const unSub = setTimeout(()=>setShowUp(true),500)
+    return ()=> clearTimeout(unSub)
+  },[])
+  if(!showUp) return <Loading/>
   return (
     <main className="Login">
       <section>

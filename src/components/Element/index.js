@@ -104,6 +104,7 @@ const Element = ({node,parent}) =>{
     tempStyle.position = "absolute"
     let top = y - currentFrame.absoluteBoundingBox.y
     let left = x - currentFrame.absoluteBoundingBox.x
+
     if(constraints){
 
       switch (constraints.horizontal) {
@@ -159,6 +160,11 @@ const Element = ({node,parent}) =>{
       tempStyle.top = 0
       tempStyle.left = 0
     }
+    if(name === 'Naho') {
+      console.log(nodeTree);
+      console.log(node.parentNode);
+      console.log(nodeTree[node.parentNode]);
+    }
   }
   const conditionBasedVisibility =()=>{
     if(pluginState.pluginConditions.hasOwnProperty(id)) {
@@ -198,6 +204,7 @@ const Element = ({node,parent}) =>{
         if(node.layoutGrow===1)tempStyle.flex = 1
         else tempStyle[flexDirectionIsHorizontal?'width':'height'] = absoluteBoundingBox[flexDirectionIsHorizontal?'width':'height']
       }
+
   }
 
   const setRadius=()=>{
@@ -353,7 +360,7 @@ const Element = ({node,parent}) =>{
     case "ELLIPSE":renderThis = <Ellipse handleClick={handleClick} style={nodeStyle} node={node}/>;break;
     default: renderThis = (
       <article
-        style={type==='GROUP'&&!flexChild?null:nodeStyle}
+        style={nodeStyle}
         onMouseEnter={()=>handleEvent(['MouseEnter','Hover'])}
         onMouseLeave={()=>handleEvent(['MouseLeave','Hover'])}
         onClick={handleClick}
