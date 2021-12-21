@@ -38,10 +38,16 @@ let initialPyroState = {
   pristine:true,
   userData:null,
   requestSent:false,
+  nodeTreeLength:0,
   token:null
 }
 const PyroReducer = (state, action) => {
   switch (action.type) {
+
+    case 'NODE_LENGTH':
+      let NODE_LENGTH = {...state}
+      NODE_LENGTH.nodeTreeLength = action.payload
+    return NODE_LENGTH;
 
     case 'HIDE_REQUEST':
       let HIDE_REQUEST = {...state}

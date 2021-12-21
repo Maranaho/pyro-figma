@@ -15,6 +15,8 @@ const RenderElements = ()=>{
     //minHeight:currentPage.children[currentFrameID].absoluteBoundingBox.height
   }
 
+
+
   useEffect(()=>{
     if(currentFrameID)dispatch({type:'ADD_CHILD_ELEMENT',payload:currentFrame})
   },[currentFrameID])

@@ -160,11 +160,6 @@ const Element = ({node,parent}) =>{
       tempStyle.top = 0
       tempStyle.left = 0
     }
-    if(name === 'Naho') {
-      console.log(nodeTree);
-      console.log(node.parentNode);
-      console.log(nodeTree[node.parentNode]);
-    }
   }
   const conditionBasedVisibility =()=>{
     if(pluginState.pluginConditions.hasOwnProperty(id)) {
@@ -343,7 +338,7 @@ const Element = ({node,parent}) =>{
       setVisibility()
       setNodeStyle(tempStyle)
     }
-  },[figmaData,nodeTree,flexChild])
+  },[figmaData,nodeTree?Object.keys(nodeTree).length:nodeTree,flexChild])
 
 
   useEffect(()=>{

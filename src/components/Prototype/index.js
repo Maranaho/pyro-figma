@@ -8,9 +8,10 @@ import Loading from '../Loading'
 
 const Prototype = ()=>{
   const dispatch = useContext(PyroDispatchContext)
-  const { direction,currentBreakpoint,breakPoints,rwd,currentFrameID,protoWidth,figmaData,figmaFile,loading,currentPageIDX,currentPageID,selection,nodeTree } = useContext(PyroStateContext)
+  const { nodeTreeLength,direction,currentBreakpoint,breakPoints,rwd,currentFrameID,protoWidth,figmaData,figmaFile,loading,currentPageIDX,currentPageID,selection,nodeTree } = useContext(PyroStateContext)
   const basicGrey = "rgba(229.00000154972076,229.00000154972076,229.00000154972076,1)"
   const [ bg,setBG ] = useState(null)
+
 
   const pageIdx = ()=>{
     if (currentPageID&&figmaData) {
@@ -54,6 +55,7 @@ const Prototype = ()=>{
     }
   }
 
+
   useEffect(pageIdx,[currentPageID,selection])
   useEffect(handleResize,[protoWidth])
   useEffect(getBreakPoints,[nodeTree])
@@ -65,6 +67,7 @@ const Prototype = ()=>{
       else setBG(null)
     }
   },[figmaData,currentPageIDX])
+
   return (
     <main className="FigmaProto">
       <ProtoActions/>

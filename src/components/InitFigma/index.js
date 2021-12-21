@@ -50,6 +50,7 @@ const InitFigma = ()=>{
         const {authData,pageData} = doc.data()
         dispatch({type:'UPDATE_FILE_DATA_FROM_FIGMA',payload:{authData,pageData}})
         dispatch({type:'SET_CURRENT_FRAME_ID',payload:pageData.children[0].prototypeStartNodeID})
+        dispatch({type:'NODE_LENGTH',payload:pageData.elementsCount})
       } else dispatch({type:'NO_PROTO'})
     }).catch(error => console.error(error))
     updateUser()

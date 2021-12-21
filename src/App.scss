@@ -68,8 +68,9 @@ button{cursor: pointer}
   border-top: 1px solid #4042436e;
   height: 100%;
   box-sizing: border-box;
-  transition: .4s ease;
-  max-height: calc(100vh - 35px)
+  max-height: calc(100vh - 35px);
+  opacity:1;
+  &.hideMe{opacity: 0}
 }
 
 
