@@ -7,7 +7,7 @@ const SolidBG = ({bg})=>{
     return {
       background:RenderedColor(bg.color),
       opacity: bg.opacity,
-      mixBlendMode: bg.blendMode.toLowerCase().split('_').join('-')
+      mixBlendMode: bg.hasOwnProperty('blendMode')?bg.blendMode.toLowerCase().split('_').join('-'):'normal'
     }
   }
   return <div className="SolidBG" style={sldBg()}/>

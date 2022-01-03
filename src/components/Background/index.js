@@ -29,7 +29,7 @@ const Background = ({ element })=>{
                 bg={bg}/>
             );break;
 
-        case "IMAGE": return <ImageBG constraints={element.constraints} bg={bg} key={key}/>;break;
+        case "IMAGE":return <ImageBG constraints={element.constraints} bg={bg} key={key}/>;break;
 
         default: return <SolidBG bg={bg} key={key}/>
       }
