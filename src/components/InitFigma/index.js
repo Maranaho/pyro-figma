@@ -43,6 +43,13 @@ const InitFigma = ()=>{
 
   }
 
+  const getVectors = () =>{
+    db.collection('fileData').doc('vectors').get()
+    .then(doc =>{
+      if (doc.exists) dispatch({type:'SET_VECTORS',payload:doc.data()})
+    }).catch(error => console.error(error))
+  }
+
   const getData = () =>{
     db.get()
     .then(doc =>{
@@ -58,6 +65,7 @@ const InitFigma = ()=>{
   }
 
 
+  useEffect(getVectors,[])
   useEffect(getData,[])
   useEffect(()=>{
     updateUser()

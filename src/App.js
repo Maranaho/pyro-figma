@@ -25,12 +25,13 @@ const App = ()=>{
   const pluginConditionsDB = fileDB.doc("pluginUIData").collection("nodeConditions")
   const pluginFieldsDB = fileDB.doc("pluginUIData").collection("nodeFields")
   const pluginTextsDB = fileDB.doc("pluginUIData").collection("nodeTexts")
+
   const [pluginVariables] = useCollectionData(pluginVariablesDB,{idField:'id'})
   const [pluginActions] = useCollectionData(pluginActionsDB,{idField:'id'})
   const [pluginConditions] = useCollectionData(pluginConditionsDB,{idField:'id'})
   const [pluginFields] = useCollectionData(pluginFieldsDB,{idField:'id'})
   const [pluginTexts] = useCollectionData(pluginTextsDB,{idField:'id'})
-  const [vectorDB] = useCollectionData(fileDB,{idField:'id'})
+  
 
   const waitForPyroState = ()=>{
     if(pristine){
