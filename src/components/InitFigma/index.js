@@ -74,6 +74,7 @@ const InitFigma = ()=>{
   useEffect(()=>{
     dispatch({type:'SET_FILEKEY',payload:fileKey})
   },[])
+
   if(!figmaFile)return <p>no file</p>
   return (
     <PyroDispatchContext.Provider value={dispatch}>

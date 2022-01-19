@@ -253,7 +253,6 @@ const Element = ({node,parent}) =>{
 
   const handleEvent = eventType =>{
     if (pluginState) {
-
       if (pluginState.pluginActions.hasOwnProperty(id)) {
         Object.keys(pluginState.pluginActions[id]).forEach(action => {
           if(eventType.indexOf(pluginState.pluginActions[id][action].eventType) !== -1 ){
@@ -315,8 +314,9 @@ const Element = ({node,parent}) =>{
       if(node.layoutMode === 'VERTICAL')classes += ' column'
       else classes += ' row'
     }
+
     setClassNames(classes)
-  },[nodeTree])
+  },[nodeTree,clickable])
 
   useEffect(()=>{
     if(nodeTree&&parent!==currentFrame.id)setParentNode(nodeTree[parent])
@@ -345,6 +345,7 @@ const Element = ({node,parent}) =>{
     if (nodeTree,pluginStateChanges) setVisibility()
   },[nodeTree,pluginStateChanges])
   useEffect(updateVisibility,[updateVis,nodeTree])
+
   if(nodeStyle===null)return null
   let renderThis
   switch (type) {
