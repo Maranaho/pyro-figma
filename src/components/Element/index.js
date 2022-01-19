@@ -100,6 +100,7 @@ const Element = ({node,parent}) =>{
 
 
   const setPosition =()=>{
+
     const { x,y,width,height } = absoluteBoundingBox
     tempStyle.position = "absolute"
     let top = y - currentFrame.absoluteBoundingBox.y
@@ -139,21 +140,23 @@ const Element = ({node,parent}) =>{
 
     if(nodeTree.hasOwnProperty(parent)&&nodeTree[parent].type !== 'FRAME'&&nodeTree[parent].type !== 'GROUP'){
       const parentPos = nodeTree[parent].absoluteBoundingBox
-      switch (constraints.horizontal) {
-        case "MIN":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
-        case "MAX":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
-        case "STRETCH":
-          tempStyle.left = tempStyle.left - parentPos.x
-          tempStyle.right = tempStyle.right - parentPos.width - (width + left)
-        ;break;
-      }
-      switch (constraints.vertical) {
-        case "MIN":case "CENTER":case "SCALE":tempStyle.top = tempStyle.top - (parentPos.y - currentFrame.absoluteBoundingBox.y);break;
-        case "MAX":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
-        case "STRETCH":
-          tempStyle.top = tempStyle.top - parentPos.y
-          tempStyle.bottom = tempStyle.bottom - parentPos.width - (width + left)
-        ;break;
+      if(constraints){
+        switch (constraints.horizontal) {
+          case "MIN":case "CENTER":case "SCALE":tempStyle.left = tempStyle.left - (parentPos.x - currentFrame.absoluteBoundingBox.x);break;
+          case "MAX":tempStyle.right = tempStyle.right - parentPos.width - (width + left);break;
+          case "STRETCH":
+            tempStyle.left = tempStyle.left - parentPos.x
+            tempStyle.right = tempStyle.right - parentPos.width - (width + left)
+          ;break;
+        }
+        switch (constraints.vertical) {
+          case "MIN":case "CENTER":case "SCALE":tempStyle.top = tempStyle.top - (parentPos.y - currentFrame.absoluteBoundingBox.y);break;
+          case "MAX":tempStyle.bottom = tempStyle.bottom - parentPos.height - (height + top);break;
+          case "STRETCH":
+            tempStyle.top = tempStyle.top - parentPos.y
+            tempStyle.bottom = tempStyle.bottom - parentPos.width - (width + left)
+          ;break;
+        }
       }
     }
     if(nodeTree.hasOwnProperty(node.parentNode)&&nodeTree[node.parentNode].type === 'GROUP'){
@@ -227,6 +230,7 @@ const Element = ({node,parent}) =>{
       delete centerParent.left
       delete centerParent.right
 
+
       const x = node.absoluteBoundingBox.x - currentFrame.absoluteBoundingBox.x
       const isLeft = x <= (currentFrame.absoluteBoundingBox.width - childStyle.width) / 2
 
@@ -248,7 +252,7 @@ const Element = ({node,parent}) =>{
       if(!centerParent.width)delete centerParent.width
       if(!childStyle.width)delete childStyle.width
       return isParent==='parent'?centerParent:childStyle
-    } else return {background:'red'}
+    }
   }
 
   const handleEvent = eventType =>{

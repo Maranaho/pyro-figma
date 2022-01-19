@@ -80,6 +80,7 @@ const getStyles = ()=>{
 }
 const sumStyles = ()=>{
   const temp = {...posStyle,...textStyles}
+  temp.width += 10
   if(pluginState.pluginConditions.hasOwnProperty(id)) {
     const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
       const isVisible = ReturnVisibility(pluginState,pluginState.pluginConditions[id][condition])
