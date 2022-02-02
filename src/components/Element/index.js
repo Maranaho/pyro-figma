@@ -362,7 +362,30 @@ const Element = ({node,parent}) =>{
 
   if(nodeStyle===null)return null
   let renderThis
+
   switch (type) {
+    case "BOOLEAN_OPERATION": {
+      const booleanChildren = Object.keys(node.children)
+      return (
+        <div className={`${type} ${name}`}>
+          {booleanChildren.map(childKey=>{
+            const pos = {...nodeStyle}
+            pos.top = 0
+            pos.left = 0
+            pos.right = 0
+            pos.bottom = 0
+            return (
+              <Vector
+                key={childKey}
+                handleClick={handleClick}
+                style={pos}
+                node={node.children[childKey]}/>
+            )
+          })}
+        </div>
+      )
+      break;
+    }
     case "VECTOR":
       if(nodeStyle&&vectors&&vectors.hasOwnProperty(id))renderThis = <Vector handleClick={handleClick} style={nodeStyle} node={node}/>
       else return null;break;
@@ -374,7 +397,7 @@ const Element = ({node,parent}) =>{
         onMouseEnter={()=>handleEvent(['MouseEnter','Hover'])}
         onMouseLeave={()=>handleEvent(['MouseLeave','Hover'])}
         onClick={handleClick}
-        className={'Element '+ classNames }>
+        className={'Element ' + type + ' ' + classNames}>
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Background element={node}/>}
         {(type!=="TEXT"&&type!=="VECTOR"&&type!=="BOOLEAN_OPERATION")&&<Stroke element={node}/>}
         {pluginState&&(pluginState.hasOwnProperty('pluginFields')&&pluginState.pluginFields.hasOwnProperty(id))&&<Field handleClick={handleClick} style={nodeStyle} node={node}/>}
