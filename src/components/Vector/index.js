@@ -6,13 +6,13 @@ import Stroke from '../Stroke'
 import './Vector.css'
 
 const Vector = ({handleClick,node,style}) =>{
-const { vectors } = useContext(PyroStateContext)
-const { transitionNodeID,name,id,strokeWeight } = node
+const { vectors,nodeTree } = useContext(PyroStateContext)
+const { transitionNodeID,name,id,strokeWeight,parentNode } = node
 const {vectorPaths,width,height} = vectors[id]
 const [vectorStyle,setVectorStyle] = useState({...style})
+const [isLoaded,setLoaded] = useState(false)
 const [SVGStyle,setSVGStyle] = useState(null)
 const [pathStyle,setPathStyle] = useState(null)
-
 const setVector = ()=>{
   let tempStyle = {...vectorStyle}
   tempStyle.width = width
@@ -29,7 +29,23 @@ const setVector = ()=>{
   if(node.strokes.length)path.stroke = RenderedColor(node.strokes[0].color)
   setPathStyle(path)
 }
+const setPos =()=>{
+  let tempStyle = {...vectorStyle}
+  if(nodeTree&&nodeTree.hasOwnProperty(parentNode)) {
+    setLoaded(true)
+    if(nodeTree[parentNode].type === 'INSTANCE'){
+      if(style.hasOwnProperty('top')) tempStyle.top = 0
+      if(style.hasOwnProperty('left')) tempStyle.left = 0
+      if(style.hasOwnProperty('right')) tempStyle.right = 0
+      if(style.hasOwnProperty('bottom')) tempStyle.bottom = 0
+      setVectorStyle(tempStyle)
+    }
+  }
+
+}
 useEffect(setVector,[])
+useEffect(setPos,[style])
+if(!isLoaded)return null
   return (
     <article
       onClick={handleClick}

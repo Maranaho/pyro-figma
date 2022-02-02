@@ -132,8 +132,7 @@ const Element = ({node,parent}) =>{
           tempStyle.bottom = currentFrame.absoluteBoundingBox.height - (height + top)
         ;break;
       }
-    }
-    else {
+    } else {
       tempStyle.top = top
       tempStyle.left = left
     }
@@ -163,7 +162,18 @@ const Element = ({node,parent}) =>{
       tempStyle.top = 0
       tempStyle.left = 0
     }
+
+    if(nodeTree[node.parentNode]&&nodeTree[node.parentNode].type === 'INSTANCE') {
+      tempStyle.top = 0
+      tempStyle.left = 0
+    }
+
+
+
   }
+
+
+
   const conditionBasedVisibility =()=>{
     if(pluginState.pluginConditions.hasOwnProperty(id)) {
       const showMe = Object.keys(pluginState.pluginConditions[id]).every(condition => {
